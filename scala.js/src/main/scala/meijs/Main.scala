@@ -1,15 +1,19 @@
 package meijs
 
+import meijs.api.event_system.MultimodalEventSystem
 import meijs.structures.Event
+
+import scala.scalajs.js
 
 object Main {
   def main(args: Array[String]): Unit = {
+    FactBase.init()
+    MultimodalEventSystem.init()
 
-    scala.scalajs.js.timers.setInterval(500) {
-      FactBase.insert(Event((System.currentTimeMillis / 1000) + 2000))
-      println(FactBase)
+    // Faking fusion event creation
+    js.timers.setInterval(1000) {
+      FactBase += Event()
     }
-
   }
 
 }

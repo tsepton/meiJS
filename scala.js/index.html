@@ -1,11 +1,17 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
     <title>The Scala.js Tutorial</title>
   </head>
   <body>
     <!-- Include Scala.js compiled code -->
-    <script type="text/javascript" src="./target/scala-2.13/meijs-fastopt/main.js"></script>
+    <script
+      type="text/javascript"
+      src="./target/scala-2.13/meijs-fastopt/main.js"
+    ></script>
+    <script>
+      document.addEventListener("MultimodalEvent", console.log);
+    </script>
   </body>
 </html>

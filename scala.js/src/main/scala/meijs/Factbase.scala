@@ -5,10 +5,11 @@ import meijs.structures.Fact
 import scala.util.{Failure, Success, Try}
 import scala.scalajs.js
 
+
 object FactBase {
 
   // Garbage Collector initialisation
-  js.timers.setInterval(200) {
+  def init(): Unit = js.timers.setInterval(200) {
     GarbageCollector.collect()
   }
 
