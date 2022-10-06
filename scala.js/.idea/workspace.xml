@@ -5,8 +5,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8d38017a-a311-44aa-a24c-c6eaf80e0cbe" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/sbt__org_scala_js_scalajs_dom_sjs1_2_13_2_1_0_jar.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/scala/meijs/FactBase.scala" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules/MeiJS-build.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules/MeiJS-build.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules/MeiJS.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules/MeiJS.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/scala_compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/scala_compiler.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/scala/example/Hello.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/meijs/Main.scala" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.sbt" beforeDir="false" afterPath="$PROJECT_DIR$/build.sbt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/scala/meijs/Factbase.scala" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/scala/meijs/Main.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/meijs/Main.scala" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/scala/meijs/structures/Fact.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/meijs/structures/Fact.scala" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -53,15 +61,16 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/Thibaut/Documents/Projects/meiJS/scala.js&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "last_opened_file_path": "C:/Users/tsept/Documents/Dev/meiJS/scala.js",
+    "nodejs_package_manager_path": "npm"
   }
-}</component>
+}]]></component>
   <component name="RunManager">
     <configuration default="true" type="JetRunConfigurationType">
       <method v="2">
@@ -85,6 +94,7 @@
       <updated>1664976134333</updated>
       <workItem from="1664976135842" duration="594000" />
       <workItem from="1664976750601" duration="5595000" />
+      <workItem from="1665040647432" duration="5996000" />
     </task>
     <servers />
   </component>

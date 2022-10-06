@@ -4,7 +4,7 @@
     <profile name="sbt 1" modules="scala-js_45" />
     <profile name="sbt 2" modules="MeiJS">
       <plugins>
-        <plugin path="C:\Users\Thibaut\AppData\Local\Coursier\Cache\v1\https\repo1.maven.org\maven2\org\scala-js\scalajs-compiler_2.13.8\1.11.0\scalajs-compiler_2.13.8-1.11.0.jar" />
+        <plugin path="C:\Users\tsept\AppData\Local\Coursier\Cache\v1\https\repo1.maven.org\maven2\org\scala-js\scalajs-compiler_2.13.8\1.11.0\scalajs-compiler_2.13.8-1.11.0.jar" />
       </plugins>
     </profile>
   </component>
