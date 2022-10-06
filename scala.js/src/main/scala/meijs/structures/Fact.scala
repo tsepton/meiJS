@@ -4,7 +4,7 @@ import org.scalajs.dom
 
 import scala.concurrent.duration.{DurationInt, FiniteDuration}
 
-trait Fact {
+sealed trait Fact {
   val validationDelay: FiniteDuration
   val emissionTime: Long = System.currentTimeMillis / 1000
 
@@ -22,7 +22,7 @@ trait Fact {
  * @param validationDelay
  * @param target
  */
-case class Event(
+case class CompletedCommand(
     validationDelay: FiniteDuration = 1.seconds,
     target: Option[dom.Node] = Option.empty
 ) extends Fact {}

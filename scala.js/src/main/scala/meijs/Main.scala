@@ -1,7 +1,7 @@
 package meijs
 
 import meijs.api.event_system.MultimodalEventSystem
-import meijs.structures.Event
+import meijs.structures.CompletedCommand
 
 import scala.scalajs.js
 
@@ -12,7 +12,7 @@ object Main {
 
     // Faking fusion event creation
     js.timers.setInterval(1000) {
-      FactBase += Event()
+      FactBase += CompletedCommand()
     }
   }
 
