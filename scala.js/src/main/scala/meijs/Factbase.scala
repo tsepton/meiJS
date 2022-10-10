@@ -1,6 +1,6 @@
 package meijs
 
-import meijs.structures.Fact
+import meijs.structures.{CompletedCommand, Fact}
 
 import scala.util.{Failure, Success, Try}
 import scala.scalajs.js
@@ -8,8 +8,11 @@ import scala.scalajs.js
 
 object FactBase {
 
-  // Garbage Collector initialisation
-  def init(): Unit = js.timers.setInterval(200) {
+  /**
+   * Set an interval for the garbage collector object to run and remove all the invalid data inside the fact base
+   * @param ms
+   */
+  def init(ms: Int = 100): Unit = js.timers.setInterval(ms) {
     GarbageCollector.collect()
   }
 
