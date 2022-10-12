@@ -1,6 +1,6 @@
 package meijs.api.event_system
 
-import meijs.structures.CompletedCommand
+import meijs.factbase.structures.CompletedCommand
 import org.scalajs.dom
 import org.scalajs.dom.{EventTarget, document}
 

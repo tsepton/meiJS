@@ -1,14 +1,12 @@
 package meijs.api.event_system
 
-import meijs.FactBase
-import meijs.structures.CompletedCommand
+import meijs.factbase.FactBase
+import meijs.factbase.structures.CompletedCommand
 
 import scala.collection.mutable.ListBuffer
-import scala.concurrent.Future
 import scala.scalajs.js
 
 object MultimodalEventSystem {
-  import scala.concurrent.ExecutionContext.Implicits.global
 
   private val _emitted = new ListBuffer[EmittedCommand]()
 
@@ -17,7 +15,7 @@ object MultimodalEventSystem {
     */
   def init(ms: Int = 50): Unit = {
     js.timers.setInterval(ms) { handleEmission() }
-    js.timers.setInterval(ms*10) { GarbageCollector.collect() }
+    js.timers.setInterval(ms * 10) { GarbageCollector.collect() }
   }
 
   private def handleEmission(): Unit = {
@@ -25,8 +23,8 @@ object MultimodalEventSystem {
       .collect { case e: CompletedCommand => e }
       .map(MultimodalEvent.from)
       .filterNot(_emitted.contains)
-    Future { commands.foreach(_.emit) }
-    _emitted += commands
+    _emitted ++= commands.map(EmittedCommand.from)
+    commands.foreach(_.emit)
   }
 
   private object GarbageCollector {
