@@ -5,10 +5,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8d38017a-a311-44aa-a24c-c6eaf80e0cbe" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/modules/MeiJS-build.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules/MeiJS-build.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.sbt" beforeDir="false" afterPath="$PROJECT_DIR$/build.sbt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/plugins.sbt" beforeDir="false" afterPath="$PROJECT_DIR$/project/plugins.sbt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/scala/meijs/Factbase.scala" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/scala/meijs/Main.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/meijs/Main.scala" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/scala/meijs/api/event_system/EmittedCommand.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/meijs/api/event_system/EmittedCommand.scala" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/scala/meijs/api/event_system/MultimodalEvent.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/meijs/api/event_system/MultimodalEvent.scala" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/scala/meijs/api/event_system/MultimodalEventSystem.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/meijs/api/event_system/MultimodalEventSystem.scala" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/scala/meijs/structures/Fact.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/meijs/structures/Fact.scala" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/scala/meijs/structures/Fact.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/meijs/factbase/structures/Fact.scala" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -47,11 +54,17 @@
       </list>
     </option>
   </component>
+  <component name="FormatOnSaveOptions">
+    <option name="myRunOnSave" value="true" />
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
+  </component>
+  <component name="OptimizeOnSaveOptions">
+    <option name="myRunOnSave" value="true" />
   </component>
   <component name="ProjectCodeStyleSettingsMigration">
     <option name="version" value="2" />
@@ -62,16 +75,20 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "last_opened_file_path": "C:/Users/tsept/Documents/Dev/meiJS/scala.js",
-    "nodejs_package_manager_path": "npm"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/tsept/Documents/Dev/meiJS/hephaisTK&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;rearrange.code.on.save&quot;: &quot;true&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;actions.on.save&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager">
     <configuration default="true" type="JetRunConfigurationType">
       <method v="2">
@@ -95,7 +112,10 @@
       <updated>1664976134333</updated>
       <workItem from="1664976135842" duration="594000" />
       <workItem from="1664976750601" duration="5595000" />
-      <workItem from="1665040647432" duration="12038000" />
+      <workItem from="1665040647432" duration="12845000" />
+      <workItem from="1665387466708" duration="10171000" />
+      <workItem from="1665490806028" duration="2505000" />
+      <workItem from="1665561050384" duration="20616000" />
     </task>
     <servers />
   </component>
@@ -112,5 +132,9 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
   </component>
 </project>
