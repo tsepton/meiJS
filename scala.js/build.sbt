@@ -1,25 +1,37 @@
 import Dependencies._
 
 ThisBuild / scalaVersion := "2.13.8"
-ThisBuild / version := "0.1.0-SNAPSHOT"
+ThisBuild / version := "1.0.0"
 ThisBuild / organization := "be.tsepton"
 ThisBuild / organizationName := "tsepton"
 
 lazy val root = (project in file("."))
+  .enablePlugins(ScalaJSPlugin)
+  .enablePlugins(ScalaJSBundlerPlugin)
+  .enablePlugins(BuildInfoPlugin)
   .settings(
     name := "MeiJS",
-    libraryDependencies += scalaTest % Test
+    libraryDependencies += scalaTest % Test,
+    buildInfoPackage := "meijs",
+    buildInfoKeys := Seq[BuildInfoKey](
+      name,
+      version,
+      scalaVersion,
+      sbtVersion,
+      description
+    )
   )
+val author = "tsepton"
 
+// Dependencies
 libraryDependencies ++= List(
   "org.scala-js" %%% "scalajs-dom" % "2.1.0"
 )
 
-// ScalaJS export related
-enablePlugins(ScalaJSPlugin)
-enablePlugins(ScalaJSBundlerPlugin)
+// ScalaJS RELATED
 Compile / mainClass := Some("meijs.Main")
 scalaJSUseMainModuleInitializer := true
 webpackBundlingMode := BundlingMode.LibraryAndApplication()
-
-// See https://www.scala-sbt.org/1.x/docs/Using-Sonatype.html for instructions on how to publish to Sonatype.
+// Tasks related
+// NPM package generation
+enablePlugins(JavascriptModulePlugin)
