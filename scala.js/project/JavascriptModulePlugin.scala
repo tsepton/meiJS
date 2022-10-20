@@ -18,7 +18,7 @@ object JavascriptModulePlugin extends AutoPlugin {
       val inputDir: String = "target/scala-2.13/meijs-opt"
       val targetDir: String = s"$npmTargetDir/src"
 
-      def copyFile(): Unit = {
+      def copyFiles(): Unit = {
 
         implicit def toPath(filename: String): Path = get(filename)
 
@@ -67,7 +67,7 @@ object JavascriptModulePlugin extends AutoPlugin {
       // Compile scalaJS code
       (Compile / fullOptJS).value
       // create npm package to be published
-      copyFile()
+      copyFiles()
     }
   )
 
