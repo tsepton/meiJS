@@ -31,7 +31,6 @@ libraryDependencies ++= List(
 // ScalaJS RELATED
 Compile / mainClass := Some("meijs.Main")
 scalaJSUseMainModuleInitializer := true
-webpackBundlingMode := BundlingMode.LibraryAndApplication()
 scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.ESModule) }
 
 // Tasks related

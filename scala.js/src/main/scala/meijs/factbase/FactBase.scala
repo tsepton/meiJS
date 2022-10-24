@@ -21,9 +21,7 @@ object FactBase {
     */
   @JSExport
   def init(ms: Int = 100): Unit = js.timers.setInterval(ms) {
-    println(_facts.length)
     GarbageCollector.collect()
-    println(_facts.length)
   }
 
   /** Insert a *fact* at the given *index*
