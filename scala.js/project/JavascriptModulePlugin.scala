@@ -43,7 +43,7 @@ object JavascriptModulePlugin extends AutoPlugin {
           |{
            |  "name": "@${Keys.organizationName.value}/MeiJS",
            |  "version": "${Keys.version.value}",
-           |  "description": s"${Keys.description.value}}",
+           |  "description": "${Keys.description.value}}",
            |  "scripts": {
            |    "test": "sbt test"
            |  },
