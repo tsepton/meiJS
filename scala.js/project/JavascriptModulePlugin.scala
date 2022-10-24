@@ -47,7 +47,7 @@ object JavascriptModulePlugin extends AutoPlugin {
            |  "scripts": {
            |    "test": "sbt test"
            |  },
-           |  "main": "src",
+           |  "main": "src/main.js",
            |  "repository": {
            |    "type": "git",
            |    "url": "git+https://...git"
