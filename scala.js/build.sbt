@@ -29,7 +29,7 @@ libraryDependencies ++= List(
 )
 
 // ScalaJS RELATED
-Compile / mainClass := Some("meijs.Main")
+Compile / mainClass := Some("meijs.MeiJS")
 scalaJSUseMainModuleInitializer := true
 scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.ESModule) }
 
