@@ -7,7 +7,7 @@ ThisBuild / organizationName := "tsepton"
 
 lazy val root = (project in file("."))
   .enablePlugins(ScalaJSPlugin)
-  .enablePlugins(ScalaJSBundlerPlugin)
+  //.enablePlugins(ScalaJSBundlerPlugin)
   .enablePlugins(BuildInfoPlugin)
   .settings(
     name := "MeiJS",
@@ -32,6 +32,8 @@ libraryDependencies ++= List(
 Compile / mainClass := Some("meijs.Main")
 scalaJSUseMainModuleInitializer := true
 webpackBundlingMode := BundlingMode.LibraryAndApplication()
+scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.ESModule) }
+
 // Tasks related
 // NPM package generation
 enablePlugins(JavascriptModulePlugin)

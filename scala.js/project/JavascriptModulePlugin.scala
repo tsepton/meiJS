@@ -24,7 +24,7 @@ object JavascriptModulePlugin extends AutoPlugin {
 
         new File(targetDir).mkdirs()
 
-        val fileDist = List("main.js") // TODO
+        val fileDist = List("main.js", "main.js.map")
         for (file <- fileDist) {
           println(s"Copying file $inputDir/$file to destination...")
           copy(s"$inputDir/$file", s"$targetDir/$file", REPLACE_EXISTING)

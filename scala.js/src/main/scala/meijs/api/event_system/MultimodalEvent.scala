@@ -4,7 +4,6 @@ import meijs.factbase.structures.CompletedCommand
 import org.scalajs.dom
 import org.scalajs.dom.{EventTarget, document}
 
-// @js.native :::: See what it means TODO
 class MultimodalEvent(
     typeArg: String = "MultimodalEvent",
     val source: CompletedCommand,
