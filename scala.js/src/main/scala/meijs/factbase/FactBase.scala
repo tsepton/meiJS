@@ -3,20 +3,17 @@ package meijs.factbase
 import meijs.factbase.structures.Fact
 
 import scala.scalajs.js
-import scala.scalajs.js.JSConverters._
 import scala.util.{Failure, Success, Try}
 
 object FactBase {
 
   private var _facts: List[Fact] = Nil
 
-  def facts: js.Array[Fact] = _facts.toJSArray
-
   /** Set an interval for the garbage collector object to run and remove all the invalid data inside the fact base
     *
     * @param ms the time in milliseconds for an interval to run the garbage collector task
     */
-  def init(ms: Int = 100): Unit = js.timers.setInterval(ms) {
+  def init(ms: Int): Unit = js.timers.setInterval(ms) {
     GarbageCollector.collect()
   }
 

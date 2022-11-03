@@ -13,7 +13,7 @@ object MultimodalEventSystem {
   /** Set an interval which will collect and emit all completed MultimodalEvent in the fact base
     * @param ms: the time interval in milliseconds between each collect of events
     */
-  def init(ms: Int = 50): Unit = {
+  def init(ms: Int): Unit = {
     js.timers.setInterval(ms) { handleEmission() }
     js.timers.setInterval(ms * 10) { GarbageCollector.collect() }
   }

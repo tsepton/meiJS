@@ -1,5 +1,9 @@
 <script>
   import * as meiJS from "@tsepton/MeiJS";
+
+  meiJS.enable({
+    useEventSystem: true,
+  });
 </script>
 
 <main>
