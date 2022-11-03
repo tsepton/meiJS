@@ -4,33 +4,36 @@ import scala.concurrent.duration._
 
 trait Event {
   val validationDelay: FiniteDuration = 1.seconds // TODO
-  val emissionTime: Long = System.currentTimeMillis / 1000
 
-  val name: String
+  val emissionTime: Long = System.currentTimeMillis / 1000
 
   def isValid: Boolean = validUntil > (System.currentTimeMillis / 1000)
 
   def validUntil: Long = emissionTime + validationDelay.toSeconds
 
-  // Operators
+  def `;`(e: Event): CompositeExpression = followedBy(e)
 
-  def `;`(e: Event): CompositeEvent = followedBy(e)
+  def followedBy(e: Event): CompositeExpression = FollowedBy(this, e)
 
-  def followedBy(e: Event): CompositeEvent = FollowedBy(this.name)(this, e)
+  def |(e: Event): CompositeExpression = or(e)
 
-  def |(e: Event): CompositeEvent = or(e)
+  def or(e: Event): CompositeExpression = Or(this, e)
 
-  def or(e: Event): CompositeEvent = Or(this.name)(this, e)
+  def +(e: Event): CompositeExpression = and(e)
 
-  def +(e: Event): CompositeEvent = and(e)
+  def and(e: Event): CompositeExpression = And(this, e)
 
-  def and(e: Event): CompositeEvent = And(this.name)(this, e)
+  def *(): CompositeExpression = iteration
 
-  def *(): CompositeEvent = iteration
+  def iteration: CompositeExpression = Iteration(this)
 
-  def iteration: CompositeEvent = Iteration(this.name)(this)
 }
 
-trait AtomicEvent extends Event
+trait AtomicEvent extends Event {
+  val name: String
+}
 
-trait CompositeEvent extends Event
+trait CompositeEvent extends Event {
+  val maybeName: Option[String]
+  val expression: CompositeExpression
+}

@@ -1,25 +1,21 @@
 package meijs.eventbase.structures
 
-import scala.scalajs.js.annotation.JSExportTopLevel
+import scala.language.implicitConversions
 
-sealed trait Operator
+sealed trait CompositeExpression
 
-@JSExportTopLevel("And")
-final case class And(name: String)(a: Event, b: Event)
-    extends CompositeEvent
-    with Operator
+case object CompositeExpression {
+  implicit def toCompositeEvent(e: CompositeExpression): CompositeEvent =
+    new CompositeEvent {
+      override val maybeName: Option[String] = Option.empty
+      override val expression: CompositeExpression = e
+    }
+}
 
-@JSExportTopLevel("Or")
-final case class Or(name: String)(a: Event, b: Event)
-    extends CompositeEvent
-    with Operator
+final case class And(a: Event, b: Event) extends CompositeExpression
 
-@JSExportTopLevel("Iteration")
-final case class Iteration(name: String)(a: Event)
-    extends CompositeEvent
-    with Operator
+final case class Or(a: Event, b: Event) extends CompositeExpression
 
-@JSExportTopLevel("FollowedBy")
-final case class FollowedBy(name: String)(a: Event, b: Event)
-    extends CompositeEvent
-    with Operator
+final case class FollowedBy(a: Event, b: Event) extends CompositeExpression
+
+final case class Iteration(a: Event) extends CompositeExpression
