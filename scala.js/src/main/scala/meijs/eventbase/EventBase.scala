@@ -23,7 +23,7 @@ object EventBase {
     * Note: if (i > _events.length), then the event is appended
     *
     * @param event a new element to insert at position i
-    * @param i    the index the event should be inserted to
+    * @param i     the index the event should be inserted to
     */
   def insert(event: Event, i: Int): Unit = {
     val (front, back) = Try(_events.splitAt(i)) match {

@@ -1,8 +1,7 @@
 package meijs
 
 import meijs.api.event_system.MultimodalEventSystem
-import meijs.factbase.FactBase
-import meijs.factbase.structures.CompletedCommand
+import meijs.eventbase.EventBase
 import org.scalajs.dom
 
 import scala.language.implicitConversions
@@ -24,16 +23,19 @@ object MeiJS {
 
   @JSExportTopLevel("enable")
   def enable(config: Config): Unit = {
-    // Factbase
-    FactBase.init(config.intervalInMs * 2)
+    // EventBase
+    EventBase.init(50 * 2)
+
+    // Modalities activation
+    modality.dom.Dom.init()
 
     // APIs activation
-    if (config.useEventSystem) enableEventSystem(config.intervalInMs)
+    if (config.useEventSystem) enableEventSystem(50)
 
     // Faking fusion event creation
-    js.timers.setInterval(1000) {
-      FactBase += CompletedCommand()
-    }
+    /*    js.timers.setInterval(1000) {
+      EventBase += CompletedCommand()
+    }*/
   }
 
   private def enableEventSystem(intervalInMs: Int = 50): Unit = {
@@ -44,5 +46,4 @@ object MeiJS {
 }
 
 // FIXME: Find a proper solution to configure the framework
-class Config(val useEventSystem: Boolean, val intervalInMs: Int)
-    extends js.Object {}
+class Config(val useEventSystem: Boolean) extends js.Object
