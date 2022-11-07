@@ -8,36 +8,48 @@ import scala.collection.mutable.ListBuffer
 
 object SMRecogniser extends Recogniser {
 
-  var states: ListBuffer[State] = ListBuffer.empty
-  var currentStateIndex: Int = 0
+  private val _registeredEvents: ListBuffer[Event]            = ListBuffer()
+  private val _stateMachines: ListBuffer[StateMachineMutable] = ListBuffer()
 
-  def init(): Unit = Registry.registry.foreach { c =>
-    val put: CompositeEvent = ???
-    val that: CompositeEvent = ???
-    val click1: CompositeEvent = ???
-    val there: CompositeEvent = ???
-    val click2: CompositeEvent = ???
+  def stateMachines: List[StateMachineMutable] = _stateMachines.toList
 
-    put `;` (that + click1) `;` (there | click2)
-    put.followedBy(that.and(click1)).followedBy(there.or(click2))
-    FollowedBy(FollowedBy(put, And(that, click1)), Or(there, click2))
-
-    FollowedBy(
-      FollowedBy(
-        put,
-        And(that, click1)
-      ),
-      Or(there, click2)
-    )
-
-    createStateMachine(c, StateMachine())
+  def init(): Unit = {
+    sync()
   }
 
-  // FIXME: actually not tail recursive
+  /** Synchronise this internal state with the Registry registered events.
+    * Will create a state machine per registered event
+    */
+  def sync(): Unit = {
+    _registeredEvents ++= Registry.registry.filterNot(_registeredEvents contains _)
+    _stateMachines ++= _registeredEvents.map(createStateMachine(_))
+  }
+
+  /** Synchronise this internal state with the Registry registered events.
+    * Will create a state machine per registered event
+    */
+  def clean(): Unit = {
+    _registeredEvents.clear()
+    _stateMachines.clear()
+  }
+
+  /** Translate an Event into a state machine
+    *
+    * FIXME: actually not tail recursive
+    * FIXME: Make a Factory for the statemachine implementation
+    * https://refactoring.guru/design-patterns/abstract-factory
+    *
+    * @param event
+    * @param smAcc
+    * @return
+    */
   // @tailrec
-  def createStateMachine(event: Event, smAcc: StateMachine): StateMachine = {
+  private def createStateMachine(
+      event: Event,
+      smAcc: StateMachineMutable = StateMachineMutable.initial
+  ): StateMachineMutable = {
     event match {
-      case e: AtomicEvent => StateMachine.initWithSimpleEvent(e)
+      case e: AtomicEvent => StateMachineMutable.initWithSimpleEvent(e)
       case e: CompositeEvent =>
         e.expression match {
           case exp: Iteration => createStateMachine(exp.left, smAcc).loop
@@ -51,7 +63,6 @@ object SMRecogniser extends Recogniser {
             createStateMachine(exp.left, smAcc) concatenate
               createStateMachine(exp.right, smAcc)
         }
-      case _ => ??? // TODO
     }
   }
 

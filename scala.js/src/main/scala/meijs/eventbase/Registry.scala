@@ -21,4 +21,8 @@ object Registry {
   def register(compositeEvent: CompositeEvent): Unit =
     _registry += compositeEvent
 
+  /** Erase this internal state by erasing all previously registered events
+    */
+  def clean(): Unit = _registry.clear()
+
 }
