@@ -1,19 +1,8 @@
 package meijs.eventbase.structures
 
-import scala.concurrent.duration._
-
+/** Represents a finite event emitted by a modality.
+  */
 trait Event {
-  // FIXME: Event doesn't have these properties,
-  // only events added inside the event base have these
-  /////////////////////
-  val validationDelay: FiniteDuration = 1.seconds // TODO
-
-  val emissionTime: Long = System.currentTimeMillis / 1000
-
-  def isValid: Boolean = validUntil > (System.currentTimeMillis / 1000)
-
-  def validUntil: Long = emissionTime + validationDelay.toSeconds
-  /////////////////////
 
   def `;`(e: Event): CompositeExpression = followedBy(e)
 
@@ -33,10 +22,16 @@ trait Event {
 
 }
 
+/** Event happening instantaneously
+  *
+  * eg: mouse click
+  */
 trait AtomicEvent extends Event {
   val name: String
 }
 
+/** Event composed of atomic event, happening over a period of time
+  */
 trait CompositeEvent extends Event {
   val maybeName: Option[String]
   val expression: CompositeExpression

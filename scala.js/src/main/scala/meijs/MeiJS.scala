@@ -1,7 +1,7 @@
 package meijs
 
 import meijs.api.event_system.MultimodalEventSystem
-import meijs.eventbase.EventBase
+import meijs.eventbase.Database
 import org.scalajs.dom
 
 import scala.language.implicitConversions
@@ -24,7 +24,7 @@ object MeiJS {
   @JSExportTopLevel("enable")
   def enable(config: Config): Unit = {
     // EventBase
-    EventBase.init(50 * 2)
+    Database.init(50 * 2)
 
     // Modalities activation
     modality.dom.Dom.init()

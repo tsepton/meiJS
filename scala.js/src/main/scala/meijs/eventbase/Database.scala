@@ -1,14 +1,13 @@
 package meijs.eventbase
 
-import meijs.eventbase.structures.Event
+import meijs.eventbase.structures.Data
 
 import scala.scalajs.js
 import scala.util.{Failure, Success, Try}
 
-// @ScalaJSDefined
-object EventBase {
+object Database {
 
-  private var _events: List[Event] = Nil
+  private var _events: List[Data] = Nil
 
   /** Set an interval for the garbage collector object to run and remove all the invalid data inside the event base
     *
@@ -25,7 +24,7 @@ object EventBase {
     * @param event a new element to insert at position i
     * @param i     the index the event should be inserted to
     */
-  def insert(event: Event, i: Int): Unit = {
+  def insert(event: Data, i: Int): Unit = {
     val (front, back) = Try(_events.splitAt(i)) match {
       case Failure(_)     => (_events, Nil)
       case Success(value) => value
@@ -35,31 +34,31 @@ object EventBase {
 
   /** Alias for append
     */
-  def +=(event: Event): Unit = append(event)
+  def +=(event: Data): Unit = append(event)
 
   /** Append to the internal events base an element
     *
     * @param event the element to be appended
     */
-  def append(event: Event): Unit = _events = _events :+ event
+  def append(event: Data): Unit = _events = _events :+ event
 
   /** Alias for append
     */
-  def ++=(events: List[Event]): Unit = append(events)
+  def ++=(events: List[Data]): Unit = append(events)
 
   /** Append to the internal factbase a list of elements
     *
     * @param events the list of elements to be appended
     */
-  def append(events: List[Event]): Unit = _events = _events :++ events
+  def append(events: List[Data]): Unit = _events = _events :++ events
 
-  def flatMap(f: Event => List[Event]): List[Event] = _events.flatMap(f)
+  def flatMap(f: Data => List[Data]): List[Data] = _events.flatMap(f)
 
-  def map[A](f: Event => A): List[A] = _events.map(f)
+  def map[A](f: Data => A): List[A] = _events.map(f)
 
-  def filter(f: Event => Boolean): List[Event] = _events.filter(f)
+  def filter(f: Data => Boolean): List[Data] = _events.filter(f)
 
-  def collect[A <: Event](pf: PartialFunction[Event, A]): List[A] =
+  def collect[A <: Data](pf: PartialFunction[Data, A]): List[A] =
     _events.collect(pf)
 
   override def toString: String = _events.map(event => "test").toString
@@ -68,7 +67,7 @@ object EventBase {
     */
   private object GarbageCollector {
 
-    def collect(): Unit = _events = EventBase._events.filter(_.isValid)
+    def collect(): Unit = _events = Database._events.filter(_.isValid)
 
   }
 }
