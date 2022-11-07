@@ -3,6 +3,9 @@ package meijs.eventbase.structures
 import scala.concurrent.duration._
 
 trait Event {
+  // FIXME: Event doesn't have these properties,
+  // only events added inside the event base have these
+  /////////////////////
   val validationDelay: FiniteDuration = 1.seconds // TODO
 
   val emissionTime: Long = System.currentTimeMillis / 1000
@@ -10,6 +13,7 @@ trait Event {
   def isValid: Boolean = validUntil > (System.currentTimeMillis / 1000)
 
   def validUntil: Long = emissionTime + validationDelay.toSeconds
+  /////////////////////
 
   def `;`(e: Event): CompositeExpression = followedBy(e)
 

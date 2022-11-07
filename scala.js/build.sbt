@@ -22,6 +22,7 @@ lazy val root = (project in file("."))
     )
   )
 val author = "tsepton"
+scalacOptions ++= Seq("-deprecation", "-feature")
 
 // Dependencies
 libraryDependencies ++= List(
