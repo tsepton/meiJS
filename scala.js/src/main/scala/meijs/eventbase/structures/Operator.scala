@@ -12,10 +12,43 @@ case object CompositeExpression {
     }
 }
 
-final case class And(a: Event, b: Event) extends CompositeExpression
+final case class And(left: Event, right: Event)
+    extends CompositeExpression
+    with BinaryOperator {
+  val identifier = "+"
+}
 
-final case class Or(a: Event, b: Event) extends CompositeExpression
+final case class Or(left: Event, right: Event)
+    extends CompositeExpression
+    with BinaryOperator {
+  val identifier = "|"
+}
 
-final case class FollowedBy(a: Event, b: Event) extends CompositeExpression
+final case class FollowedBy(left: Event, right: Event)
+    extends CompositeExpression
+    with BinaryOperator {
+  val identifier = ";"
+}
 
-final case class Iteration(a: Event) extends CompositeExpression
+final case class Iteration(left: Event)
+    extends CompositeExpression
+    with UnaryOperator {
+  val identifier = "*"
+}
+
+sealed trait Operator {
+  val identifier: String
+}
+
+sealed trait UnaryOperator extends Operator {
+  val left: Event
+
+  override def toString: String = left.toString + identifier
+}
+
+sealed trait BinaryOperator extends Operator {
+  val left: Event
+  val right: Event
+
+  override def toString: String = left.toString + identifier + right
+}

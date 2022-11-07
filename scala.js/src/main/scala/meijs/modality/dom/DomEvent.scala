@@ -1,7 +1,7 @@
 package meijs.modality.dom
 
 import meijs.eventbase.structures.AtomicEvent
-import org.scalajs.{dom ⇒ domjs}
+import org.scalajs.{dom => domjs}
 
 final case class DomEvent(name: String, target: domjs.EventTarget)
     extends AtomicEvent
