@@ -16,7 +16,12 @@ trait StateMachine {
   def size: Int = states.length
 
   def states: List[State]
+
   def events: List[AtomicEvent]
+
+  def isEmpty: Boolean
+
+  def nonEmpty: Boolean = !isEmpty
 
   /** See: "A domain-specific textual language for rapid prototyping of multimodal interactive systems"
     */

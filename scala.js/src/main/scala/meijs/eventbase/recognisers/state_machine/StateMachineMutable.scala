@@ -16,10 +16,7 @@ class StateMachineMutable private () extends StateMachine {
   var endState: State   = startState
 
   def events: List[AtomicEvent] =
-    visitState(Root(startState)).flatten.flatMap {
-      case Branch(_, eventFromParent) => List(eventFromParent)
-      case Root(state)                => state.events
-    }.distinct
+    visitState(Root(startState)).flatten.flatMap(_.state.events).distinct
 
   /** All that intermediate states are added to this, with the startState of this becoming the state leading to these
     * intermediate states, while the endState of that become replaced by the endState of this. This leads to an overlay.
@@ -30,7 +27,7 @@ class StateMachineMutable private () extends StateMachine {
     * @param that : The StateMachine to overlay with this
     * @return
     */
-  def overlay(that: StateMachineMutable): StateMachineMutable = {
+  def overlay(that: StateMachineMutable): StateMachineMutable = if (nonEmpty) {
     // Adding that intermediate states to this.startingState
     that.startState.transitions.foreach { case (event, state) =>
       if (that.endState == state) startState.put(event, this.endState)
@@ -44,7 +41,7 @@ class StateMachineMutable private () extends StateMachine {
         events.foreach(state.put(_, endState))
       }
     this
-  }
+  } else that
 
   private def connectedStates(to: State): List[State] =
     states.filter(_.children.contains(to))
@@ -52,27 +49,34 @@ class StateMachineMutable private () extends StateMachine {
   def states: List[State] =
     visitState(Root(startState)).flatten.map(_.state).distinct
 
-  /** @param that : The StateMachine to do the permutation with this
+  /** A new state machine is returned which was built using all possible event permutations from this and that.
+    * See: "A domain-specific textual language for rapid prototyping of multimodal interactive systems"
+    *
+    * @param that : The StateMachine to do the event permutations with this
     * @return this
     */
   def permute(that: StateMachineMutable): StateMachineMutable = {
-    val paths: List[Path] = allPaths
-      .map(path => that.allPaths.flatMap(smPath => path ++ smPath))
-      .map(_.sortWith { (event1, event2) =>
-        event1.toString.length > event2.toString.length
-      })
-      .distinct
-      .permutations
-      .toList
-      .flatten
-    for (path <- paths) {
-      var from: State = startState
-      path.zipWithIndex.foreach {
-        case (event, i) if i + 1 == path.length => update(from, event, endState)
-        case (event, _)                         => from = update(from, event)
+    val paths: List[Path] = (for {
+      thisEvents <- allPaths
+      thatEvents <- that.allPaths
+      sorted = (thisEvents ++ thatEvents)
+        .sortWith { (event1, event2) =>
+          event1.toString.length > event2.toString.length
+        }
+        .distinct
+        .permutations
+        .toList
+    } yield sorted).flatten
+    paths
+      .map {
+        _.map(StateMachineMutable.initWithSimpleEvent)
+          .foldLeft(StateMachineMutable.initial) { case (acc, sm) =>
+            acc concatenate sm
+          }
       }
-    }
-    this
+      .foldLeft(StateMachineMutable.initial) { case (acc, sm) =>
+        acc overlay sm
+      }
   }
 
   private def allPaths: List[Path] = visitState(Root(startState)).map(_.map {
@@ -119,14 +123,19 @@ class StateMachineMutable private () extends StateMachine {
     * @return `this`
     */
   def concatenate(that: StateMachineMutable): StateMachineMutable = {
-    connectedStates(to = endState)
-      .map(state => (state, state.eventsFromState(endState)))
-      .foreach { case (state, events) =>
-        events.foreach(state.put(_, that.startState))
-      }
-    endState = that.endState
-    this
+    if (isEmpty) that
+    else {
+      connectedStates(to = endState)
+        .map(state => (state, state.eventsFromState(endState)))
+        .foreach { case (state, events) =>
+          events.foreach(state.put(_, that.startState))
+        }
+      endState = that.endState
+      this
+    }
   }
+
+  def isEmpty: Boolean = startState.events.isEmpty
 
   override def toString: String = states.map(_.toString).toString
 }

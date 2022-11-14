@@ -2,6 +2,9 @@ package meijs.eventbase.recognisers.state_machine
 
 import meijs.eventbase.structures.{AtomicEvent, CompositeEvent}
 
+// TODO: This horrible code will be entirely re-written !
+// With no data structure having a reference to itself !
+// Will be immutable !
 /** Represent a state which has events leading to other states
   *
   * @param _transitions : Event is an event leading to other state
@@ -28,16 +31,14 @@ case class State private (private var _transitions: Map[AtomicEvent, State])(imp
   def put(event: AtomicEvent, state: State): Unit = _transitions =
     _transitions ++ Map(event -> state)
 
-  override def toString: String = {
+  override def toString: String =
     (if (transitions.nonEmpty)
-       transitions.map {
-         case (event: AtomicEvent, state) =>
-           f"($id) -${event.name}-> (${state.id})"
-         case (event: CompositeEvent, state) =>
-           f"($id) -${event.maybeName.getOrElse("Unnamed event")}-> (${state.id})"
+       transitions.map { case (event, state) =>
+         f"($id) -${event.name}-> (${state.id})"
        }.toList
      else List(f"($id)")).toString
-  }
+
+  override def hashCode: Int = id
 
 }
 
