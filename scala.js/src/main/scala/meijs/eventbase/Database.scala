@@ -58,8 +58,14 @@ object Database {
 
   def filter(f: Data => Boolean): List[Data] = _events.filter(f)
 
+  def foreach(f: Data => Boolean): Unit = _events.foreach(f)
+
   def collect[A <: Data](pf: PartialFunction[Data, A]): List[A] =
     _events.collect(pf)
+
+  def sortBy(f: Data => Boolean): List[Data] = _events.sortBy(f)
+
+  def sortWith(f: (Data, Data) => Boolean): List[Data] = _events.sortWith(f)
 
   override def toString: String = _events.map(event => "test").toString
 

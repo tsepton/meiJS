@@ -1,6 +1,6 @@
 package meijs.eventbase
 
-import meijs.eventbase.structures.CompositeEvent
+import meijs.eventbase.structures.{CompositeEvent, CompositeExpression}
 
 import scala.collection.mutable.ListBuffer
 
@@ -24,5 +24,7 @@ object Registry {
   /** Erase this internal state by erasing all previously registered events
     */
   def clean(): Unit = _registry.clear()
+
+  def get(expression: CompositeExpression): Option[CompositeEvent] = registry.find(_.expression == expression)
 
 }

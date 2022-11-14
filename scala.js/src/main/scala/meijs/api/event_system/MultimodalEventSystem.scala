@@ -19,7 +19,7 @@ object MultimodalEventSystem {
   }
 
   private def handleEmission(): Unit = {
-    val commands = FactBase
+    val commands = FactBase // TODO
       .collect { case e: CompletedCommand => e }
       .map(MultimodalEvent.from)
       .filterNot(_emitted.contains)

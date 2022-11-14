@@ -1,11 +1,8 @@
 package meijs.eventbase.recognisers.state_machine
 
-import meijs.eventbase.recognisers.state_machine.StateMachineMutable.{
-  Branch,
-  Root,
-  visitState
-}
-import meijs.eventbase.structures.AtomicEvent
+import meijs.eventbase.recognisers.state_machine.StateMachineMutable.{Branch, Root, visitState}
+import meijs.eventbase.structures.{AtomicEvent, Data}
+import meijs.eventbase.{Database, Registry}
 
 class StateMachineMutable private () extends StateMachine {
 
@@ -138,6 +135,7 @@ class StateMachineMutable private () extends StateMachine {
   def isEmpty: Boolean = startState.events.isEmpty
 
   override def toString: String = states.map(_.toString).toString
+
 }
 
 case object StateMachineMutable {
@@ -170,4 +168,34 @@ case object StateMachineMutable {
 
   private case class Branch(state: State, eventFromParent: AtomicEvent)
       extends Transition
+}
+
+case class MachineMutableJSStateKeeper(
+    private var currentState: State,
+    machine: StateMachineMutable
+) {
+  assert(machine.states contains currentState)
+
+  private var lastEmissionTime: Long = 0
+
+  val keepTracks: Unit = scalajs.js.timers.setInterval(50) {
+    val newEventsOrdered: List[Data] =
+      Database.sortWith(_.emissionTime < _.emissionTime).collect {
+        case e: AtomicEvent if e.emissionTime > lastEmissionTime => e
+      }
+    newEventsOrdered.lastOption.foreach(e => lastEmissionTime = e.emissionTime)
+    newEventsOrdered.foreach {
+      case e: AtomicEvent if currentState.events.contains(e) =>
+        if (machine.endState == currentState.transitions(e))
+          Database += Registry.get(???).get
+        // TODO : How to get the compositeEvent from the machine ? it is registered in the Registry,
+        // however event.expression will - in a near future - have variables so these instances
+        // won't be usable anymore and will have a strong link with the machine internal state
+        // Idea : use Registry to register expressions, have the machine keep track of the expression it represents
+        // => Registry.get(machine.expression).get
+        // However, when building the machine, we use intermediate machines... => Have trait and two case classes
+        // trait StateMachine - case class StateMachineDone extends StateMachine - case class StateMachineProgress extends StateMachine
+        else currentState = currentState.transitions(e)
+    }
+  }
 }
