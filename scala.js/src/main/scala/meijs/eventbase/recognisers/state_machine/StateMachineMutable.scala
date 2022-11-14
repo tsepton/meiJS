@@ -9,8 +9,6 @@ import meijs.eventbase.structures.Event
 
 class StateMachineMutable private () extends StateMachine {
 
-  private implicit val si: StateIdentifier = StateIdentifier()
-
   type Self         = StateMachineMutable
   private type Path = List[Event]
 
@@ -29,27 +27,27 @@ class StateMachineMutable private () extends StateMachine {
     * @return
     */
   def overlay(that: StateMachineMutable): StateMachineMutable = {
+    println(f"this: $this")
+    println(f"that: $that")
     // Adding that intermediate states to this.startingState
-    startState.transitions ++ that.startState.transitions
+    that.startState.transitions.foreach { case (event, state) =>
+      startState.put(event, state)
+    }
     // Updating that.endingState with this.endingState
     that
-      .findConnectedStates(to = that.endState)
-      .map(state => (state, state.findEventsFromState(that.endState)))
+      .connectedStates(to = that.endState)
+      .map(state => (state, state.eventsFromState(that.endState)))
       .foreach { case (state, events) =>
-        events.foreach(state.transitions.put(_, endState))
+        events.foreach(state.put(_, endState))
       }
     this
   }
 
-  private def findConnectedStates(to: State): List[State] =
+  private def connectedStates(to: State): List[State] =
     states.filter(_.children.contains(to))
 
-  def states: List[State] = {
-    val allStates: List[State] = {
-      visitState(Root(startState)).flatten.map(_.state).distinct
-    }
-    allStates
-  }
+  def states: List[State] =
+    visitState(Root(startState)).flatten.map(_.state).distinct
 
   /** @param that : The StateMachine to do the permutation with this
     * @return this
@@ -96,7 +94,7 @@ class StateMachineMutable private () extends StateMachine {
     states.find(state => state == from) match {
       case None => ()
       case Some(from) =>
-        from.transitions.put(event, target)
+        from.put(event, target)
         endState = target
     }
     target
@@ -118,10 +116,10 @@ class StateMachineMutable private () extends StateMachine {
     * @return `this`
     */
   def concatenate(that: StateMachineMutable): StateMachineMutable = {
-    findConnectedStates(to = endState)
-      .map(state => (state, state.findEventsFromState(endState)))
+    connectedStates(to = endState)
+      .map(state => (state, state.eventsFromState(endState)))
       .foreach { case (state, events) =>
-        events.foreach(state.transitions.put(_, that.startState))
+        events.foreach(state.put(_, that.startState))
       }
     endState = that.endState
     this
