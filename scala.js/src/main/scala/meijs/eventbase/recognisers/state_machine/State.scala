@@ -29,15 +29,14 @@ case class State private (private var _transitions: Map[Event, State])(implicit
     _transitions ++ Map(event -> state)
 
   override def toString: String = {
-    transitions
-      .map {
-        case (event: AtomicEvent, state) =>
-          f"$id -${event.name}-> ${state.id}"
-        case (event: CompositeEvent, state) =>
-          f"$id -${event.maybeName.getOrElse("Unnamed event")}-> ${state.id}"
-      }
-      .toList
-      .toString
+    (if (transitions.nonEmpty)
+       transitions.map {
+         case (event: AtomicEvent, state) =>
+           f"($id) -${event.name}-> (${state.id})"
+         case (event: CompositeEvent, state) =>
+           f"($id) -${event.maybeName.getOrElse("Unnamed event")}-> (${state.id})"
+       }.toList
+     else List(f"($id)")).toString
   }
 
 }
