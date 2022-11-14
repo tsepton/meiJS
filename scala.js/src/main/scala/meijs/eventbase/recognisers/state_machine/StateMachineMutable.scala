@@ -5,17 +5,21 @@ import meijs.eventbase.recognisers.state_machine.StateMachineMutable.{
   Root,
   visitState
 }
-import meijs.eventbase.structures.Event
+import meijs.eventbase.structures.AtomicEvent
 
 class StateMachineMutable private () extends StateMachine {
 
   type Self         = StateMachineMutable
-  private type Path = List[Event]
+  private type Path = List[AtomicEvent]
 
   var startState: State = State.initial
   var endState: State   = startState
 
-  def size: Int = states.length
+  def events: List[AtomicEvent] =
+    visitState(Root(startState)).flatten.flatMap {
+      case Branch(_, eventFromParent) => List(eventFromParent)
+      case Root(state)                => state.events
+    }.distinct
 
   /** All that intermediate states are added to this, with the startState of this becoming the state leading to these
     * intermediate states, while the endState of that become replaced by the endState of this. This leads to an overlay.
@@ -27,11 +31,10 @@ class StateMachineMutable private () extends StateMachine {
     * @return
     */
   def overlay(that: StateMachineMutable): StateMachineMutable = {
-    println(f"this: $this")
-    println(f"that: $that")
     // Adding that intermediate states to this.startingState
     that.startState.transitions.foreach { case (event, state) =>
-      startState.put(event, state)
+      if (that.endState == state) startState.put(event, this.endState)
+      else startState.put(event, state)
     }
     // Updating that.endingState with this.endingState
     that
@@ -88,7 +91,7 @@ class StateMachineMutable private () extends StateMachine {
     */
   private def update(
       from: State,
-      event: Event,
+      event: AtomicEvent,
       target: State = State.initial
   ): State = {
     states.find(state => state == from) match {
@@ -129,7 +132,7 @@ class StateMachineMutable private () extends StateMachine {
 }
 
 case object StateMachineMutable {
-  def initWithSimpleEvent(event: Event): StateMachineMutable = {
+  def initWithSimpleEvent(event: AtomicEvent): StateMachineMutable = {
     val sm = initial
     sm.update(sm.endState, event)
     sm
@@ -140,19 +143,14 @@ case object StateMachineMutable {
   private def visitState(
       transition: Transition,
       visited: List[Transition] = Nil
-  ): List[List[Transition]] = {
-    if (!visited.map(_.state).contains(transition.state)) {
-      List(visited :+ transition)
-    } else {
-      val neighbours: List[Transition] = transition.state.transitions.map {
-        case (event, target) => Branch(target, event)
-      }.toList filterNot visited.contains
-      neighbours.map(visitState(_, transition +: visited).flatten) match {
-        // we visited at least the given transition
-        case x if x.isEmpty && visited.isEmpty => List(List(transition))
-        case x @ _                             => x
-      }
-    }
+  ): List[List[Transition]] = if (visited.map(_.state).contains(transition.state))
+    List(visited)
+  else {
+    val neighbours: List[Branch] = transition.state.transitions.map {
+      case (event, target) => Branch(target, event)
+    }.toList filterNot visited.contains
+    if (neighbours.isEmpty) List(visited :+ transition)
+    else neighbours.map(visitState(_, visited :+ transition).flatten)
   }
 
   private trait Transition {
@@ -161,5 +159,6 @@ case object StateMachineMutable {
 
   private case class Root(state: State) extends Transition
 
-  private case class Branch(state: State, eventFromParent: Event) extends Transition
+  private case class Branch(state: State, eventFromParent: AtomicEvent)
+      extends Transition
 }

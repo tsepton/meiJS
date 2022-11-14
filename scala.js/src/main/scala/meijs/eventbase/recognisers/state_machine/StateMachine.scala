@@ -1,5 +1,7 @@
 package meijs.eventbase.recognisers.state_machine
 
+import meijs.eventbase.structures.AtomicEvent
+
 trait StateMachine {
 
   // This is a workaround so that the return type of these method is the type of the concrete instance
@@ -11,9 +13,10 @@ trait StateMachine {
 
   def endState: State
 
-  def size: Int
+  def size: Int = states.length
 
   def states: List[State]
+  def events: List[AtomicEvent]
 
   /** See: "A domain-specific textual language for rapid prototyping of multimodal interactive systems"
     */
