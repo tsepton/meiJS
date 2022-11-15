@@ -1,8 +1,11 @@
 package meijs.eventbase.recognisers.state_machine
 
-import meijs.eventbase.recognisers.state_machine.StateMachineMutable.{Branch, Root, visitState}
-import meijs.eventbase.structures.{AtomicEvent, Data}
-import meijs.eventbase.{Database, Registry}
+import meijs.eventbase.recognisers.state_machine.StateMachineMutable.{
+  Branch,
+  Root,
+  visitState
+}
+import meijs.eventbase.structures.AtomicEvent
 
 class StateMachineMutable private () extends StateMachine {
 
@@ -40,12 +43,6 @@ class StateMachineMutable private () extends StateMachine {
     this
   } else that
 
-  private def connectedStates(to: State): List[State] =
-    states.filter(_.children.contains(to))
-
-  def states: List[State] =
-    visitState(Root(startState)).flatten.map(_.state).distinct
-
   /** A new state machine is returned which was built using all possible event permutations from this and that.
     * See: "A domain-specific textual language for rapid prototyping of multimodal interactive systems"
     *
@@ -76,34 +73,6 @@ class StateMachineMutable private () extends StateMachine {
       }
   }
 
-  private def allPaths: List[Path] = visitState(Root(startState)).map(_.map {
-    case Branch(_, eventFromParent) => Some(eventFromParent)
-    case _                          => Option.empty
-  }.filter(_.isDefined).map(_.get))
-
-  /** Update `this` state machine by adding a transition to the State corresponding to `from`
-    *
-    * If (!states.contains(from)) `this` remains untouched
-    *
-    * @param from   : The state on which a new transition should be added
-    * @param event  : The event leading to the transition
-    * @param target : The state on which the event should lead to
-    * @return the created State
-    */
-  private def update(
-      from: State,
-      event: AtomicEvent,
-      target: State = State.initial
-  ): State = {
-    states.find(state => state == from) match {
-      case None => ()
-      case Some(from) =>
-        from.put(event, target)
-        endState = target
-    }
-    target
-  }
-
   /** The endState of this becomes replaced by its startState. This leads to a loop.
     * See: "A domain-specific textual language for rapid prototyping of multimodal interactive systems"
     *
@@ -132,9 +101,43 @@ class StateMachineMutable private () extends StateMachine {
     }
   }
 
+  private def connectedStates(to: State): List[State] =
+    states.filter(_.children.contains(to))
+
   def isEmpty: Boolean = startState.events.isEmpty
 
   override def toString: String = states.map(_.toString).toString
+
+  private def allPaths: List[Path] = visitState(Root(startState)).map(_.map {
+    case Branch(_, eventFromParent) => Some(eventFromParent)
+    case _                          => Option.empty
+  }.filter(_.isDefined).map(_.get))
+
+  /** Update `this` state machine by adding a transition to the State corresponding to `from`
+    *
+    * If (!states.contains(from)) `this` remains untouched
+    *
+    * @param from   : The state on which a new transition should be added
+    * @param event  : The event leading to the transition
+    * @param target : The state on which the event should lead to
+    * @return the created State
+    */
+  private def update(
+      from: State,
+      event: AtomicEvent,
+      target: State = State.initial
+  ): State = {
+    states.find(state => state == from) match {
+      case None => ()
+      case Some(from) =>
+        from.put(event, target)
+        endState = target
+    }
+    target
+  }
+
+  def states: List[State] =
+    visitState(Root(startState)).flatten.map(_.state).distinct
 
 }
 
@@ -168,34 +171,4 @@ case object StateMachineMutable {
 
   private case class Branch(state: State, eventFromParent: AtomicEvent)
       extends Transition
-}
-
-case class MachineMutableJSStateKeeper(
-    private var currentState: State,
-    machine: StateMachineMutable
-) {
-  assert(machine.states contains currentState)
-
-  private var lastEmissionTime: Long = 0
-
-  val keepTracks: Unit = scalajs.js.timers.setInterval(50) {
-    val newEventsOrdered: List[Data] =
-      Database.sortWith(_.emissionTime < _.emissionTime).collect {
-        case e: AtomicEvent if e.emissionTime > lastEmissionTime => e
-      }
-    newEventsOrdered.lastOption.foreach(e => lastEmissionTime = e.emissionTime)
-    newEventsOrdered.foreach {
-      case e: AtomicEvent if currentState.events.contains(e) =>
-        if (machine.endState == currentState.transitions(e))
-          Database += Registry.get(???).get
-        // TODO : How to get the compositeEvent from the machine ? it is registered in the Registry,
-        // however event.expression will - in a near future - have variables so these instances
-        // won't be usable anymore and will have a strong link with the machine internal state
-        // Idea : use Registry to register expressions, have the machine keep track of the expression it represents
-        // => Registry.get(machine.expression).get
-        // However, when building the machine, we use intermediate machines... => Have trait and two case classes
-        // trait StateMachine - case class StateMachineDone extends StateMachine - case class StateMachineProgress extends StateMachine
-        else currentState = currentState.transitions(e)
-    }
-  }
 }

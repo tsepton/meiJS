@@ -8,10 +8,10 @@ import scala.collection.mutable.ListBuffer
 
 object SMRecogniser extends Recogniser {
 
-  private val _registeredEvents: ListBuffer[Event]            = ListBuffer()
-  private val _stateMachines: ListBuffer[StateMachineMutable] = ListBuffer()
+  private val _registeredEvents: ListBuffer[CompositeEvent]   = ListBuffer()
+  private val _stateMachines: ListBuffer[StateMachineWrapper] = ListBuffer()
 
-  def stateMachines: List[StateMachineMutable] = _stateMachines.toList
+  def stateMachines: List[StateMachineWrapper] = _stateMachines.toList
 
   def init(): Unit = {
     sync()
@@ -22,7 +22,9 @@ object SMRecogniser extends Recogniser {
     */
   def sync(): Unit = {
     _registeredEvents ++= Registry.registry.filterNot(_registeredEvents contains _)
-    _stateMachines ++= _registeredEvents.map(createStateMachine(_))
+    _stateMachines ++= _registeredEvents.map(event =>
+      StateMachineWrapper(event, event => createStateMachine(event))
+    )
   }
 
   /** Synchronise this internal state with the Registry registered events.
@@ -37,33 +39,33 @@ object SMRecogniser extends Recogniser {
     *
     * FIXME: actually not tail recursive
     * FIXME: Make a Factory for the statemachine implementation
+    * FIXME: return type should be StateMachine - type Self doesn't help here
     * https://refactoring.guru/design-patterns/abstract-factory
     *
-    * @param event
-    * @param smAcc
-    * @return
+    * @param event : the Event to create the state machine for
+    * @param smAcc : the accumulator for recursion - leave it empty it's none of your business twat
+    * @return the state machine corresponding to the event expression
     */
   // @tailrec
   private def createStateMachine(
       event: Event,
       smAcc: StateMachineMutable = StateMachineMutable.initial
-  ): StateMachineMutable = {
-    event match {
-      case e: AtomicEvent => StateMachineMutable.initWithSimpleEvent(e)
-      case e: CompositeEvent =>
-        e.expression match {
-          case exp: Iteration => createStateMachine(exp.left, smAcc).loop
-          case exp: And =>
-            createStateMachine(exp.left, smAcc) permute
-              createStateMachine(exp.right, smAcc)
-          case exp: Or =>
-            createStateMachine(exp.left, smAcc) overlay
-              createStateMachine(exp.right, smAcc)
-          case exp: FollowedBy =>
-            createStateMachine(exp.left, smAcc) concatenate
-              createStateMachine(exp.right, smAcc)
-        }
-    }
+  ): StateMachineMutable = event match {
+    case e: AtomicEvent => StateMachineMutable.initWithSimpleEvent(e)
+    case e: CompositeEvent =>
+      e.expression match {
+        case exp: Iteration => createStateMachine(exp.left, smAcc).loop
+        case exp: And =>
+          createStateMachine(exp.left, smAcc) permute
+            createStateMachine(exp.right, smAcc)
+        case exp: Or =>
+          createStateMachine(exp.left, smAcc) overlay
+            createStateMachine(exp.right, smAcc)
+        case exp: FollowedBy =>
+          createStateMachine(exp.left, smAcc) concatenate
+            createStateMachine(exp.right, smAcc)
+
+      }
   }
 
 }
