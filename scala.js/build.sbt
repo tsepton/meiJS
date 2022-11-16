@@ -32,7 +32,13 @@ libraryDependencies ++= List(
 // ScalaJS RELATED
 Compile / mainClass := Some("meijs.MeiJS")
 scalaJSUseMainModuleInitializer := true
-scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.ESModule) }
+scalaJSLinkerConfig ~= {
+  _.withModuleKind(ModuleKind.ESModule)
+}
+// ScalaJS bundle RELATED
+// see https://scalacenter.github.io/scalajs-bundler/cookbook.html
+webpackBundlingMode := BundlingMode
+  .LibraryAndApplication() // Export multiple entry points
 
 // Tasks related
 // NPM package generation
