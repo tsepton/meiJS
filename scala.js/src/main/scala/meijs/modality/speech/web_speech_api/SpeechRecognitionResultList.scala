@@ -7,7 +7,7 @@ import scala.scalajs.js.annotation.JSGlobal
   */
 @js.native
 @JSGlobal
-class SpeechRecognitionResultList {
+class SpeechRecognitionResultList extends js.Object {
 
   /** Returns the length of the "array" — the number of SpeechRecognitionResult objects in the list. */
   val length: Int = js.native

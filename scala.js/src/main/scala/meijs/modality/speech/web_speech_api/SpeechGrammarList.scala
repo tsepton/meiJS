@@ -9,7 +9,7 @@ import scala.scalajs.js.annotation.JSGlobal
   */
 @js.native
 @JSGlobal
-class SpeechGrammarList {
+class SpeechGrammarList extends js.Object {
 
   /** Returns the number of SpeechGrammar objects contained in the SpeechGrammarList. */
   val length: Int = js.native
