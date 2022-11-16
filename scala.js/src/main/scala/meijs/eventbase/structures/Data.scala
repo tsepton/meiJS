@@ -19,7 +19,7 @@ trait Data {
 }
 
 case object Data {
-  implicit def from(e: Event): Data = new Data {
+  def from(e: Event): Data = new Data {
     def event: Event = e
   }
 }

@@ -1,6 +1,7 @@
 package meijs.modality.dom
 
 import meijs.eventbase.Database
+import meijs.eventbase.structures.Data
 import meijs.modality.ModalityInterpreter
 import org.scalajs.dom.{KeyboardEvent, MouseEvent}
 import org.scalajs.{dom => domjs}
@@ -15,8 +16,7 @@ object Dom extends ModalityInterpreter {
       .filter(_.startsWith("on"))
       .map(str => str.slice(2, str.length + 1))
 
-  def init(): Unit =
-    events.foreach(domjs.window.addEventListener(_, registerEvent))
+  def init(): Unit = events.foreach(domjs.window.addEventListener(_, registerEvent))
 
   private def registerEvent(event: domjs.Event): Unit = {
     val maybeDomEvent = event match {
@@ -26,7 +26,7 @@ object Dom extends ModalityInterpreter {
         Some(DomEvent fromKeyboardEvent x.asInstanceOf[KeyboardEvent])
       case _ => None
     }
-    maybeDomEvent.foreach(Database += _)
+    maybeDomEvent.foreach(Database += Data from _)
   }
 
 }
