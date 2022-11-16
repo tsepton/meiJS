@@ -9,7 +9,7 @@ import org.scalajs.{dom => domjs}
 import scala.language.implicitConversions
 import scala.scalajs.js
 
-object Dom extends ModalityInterpreter {
+object DomInterpreter extends ModalityInterpreter {
 
   private lazy val events: List[String] =
     List(js.Object.keys(domjs.document), js.Object.keys(domjs.window)).flatten

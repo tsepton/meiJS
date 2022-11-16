@@ -33,7 +33,7 @@ object MeiJS {
     Test.test()
 
     // Modalities activation
-    modality.dom.Dom.init()
+    modality.dom.DomInterpreter.init()
     SMRecogniser.init()
 
     // APIs activation
