@@ -1,5 +1,7 @@
 package meijs.eventbase.structures
 
+import meijs.modality.Modality
+
 /** Represents a finite event emitted by a modality.
   */
 trait Event {
@@ -28,6 +30,9 @@ trait Event {
   */
 trait AtomicEvent extends Event {
   val name: String
+  val modality: Modality
+
+  override def toString: String = name
 }
 
 /** Event composed of atomic event, happening over a period of time
@@ -35,4 +40,6 @@ trait AtomicEvent extends Event {
 trait CompositeEvent extends Event {
   val maybeName: Option[String]
   val expression: CompositeExpression
+
+  override def toString: String = maybeName.getOrElse(expression.toString)
 }

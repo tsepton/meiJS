@@ -2,12 +2,15 @@ package meijs.eventbase.structures
 
 import scala.language.implicitConversions
 
-sealed trait CompositeExpression
+sealed trait CompositeExpression {
+  override def toString: String =
+    "todo" // TODO - Create a human readable simplified composite expresssion
+}
 
 case object CompositeExpression {
   implicit def toCompositeEvent(e: CompositeExpression): CompositeEvent =
     new CompositeEvent {
-      override val maybeName: Option[String] = Option.empty
+      override val maybeName: Option[String]       = Option.empty
       override val expression: CompositeExpression = e
     }
 }

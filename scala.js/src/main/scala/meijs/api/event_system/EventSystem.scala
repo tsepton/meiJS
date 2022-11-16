@@ -1,7 +1,7 @@
 package meijs.api.event_system
 
-import meijs.eventbase.Database
 import meijs.eventbase.structures.Data
+import meijs.eventbase.{Database, Registry}
 
 import scala.collection.mutable.ListBuffer
 import scala.scalajs.js
@@ -21,7 +21,8 @@ object EventSystem {
 
   private def handleEmission(): Unit = {
     val commands = Database
-      .collect { case e: Data => JavascriptEvent from e }
+      .filter(data => Registry.list contains data.event)
+      .collect { case data: Data => JavascriptEvent from data }
       .filterNot(emitted.contains)
     emitted ++= commands.map(_.emit)
   }

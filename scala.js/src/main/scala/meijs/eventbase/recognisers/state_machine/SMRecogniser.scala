@@ -21,7 +21,7 @@ object SMRecogniser extends Recogniser {
     * Will create a state machine per registered event
     */
   def sync(): Unit = {
-    _registeredEvents ++= Registry.registry.filterNot(_registeredEvents contains _)
+    _registeredEvents ++= Registry.list.filterNot(_registeredEvents contains _)
     _stateMachines ++= _registeredEvents.map(event =>
       StateMachineWrapper(event, event => createStateMachine(event))
     )

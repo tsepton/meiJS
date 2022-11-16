@@ -1,7 +1,8 @@
 package meijs.modality.dom
 
 import meijs.eventbase.structures.AtomicEvent
-import meijs.modality.{Keyboard, Modality, Mouse}
+import meijs.modality.Modality
+import meijs.modality.Modality.{Keyboard, Mouse}
 import org.scalajs.{dom => domjs}
 
 case class DomEvent(name: String, target: domjs.EventTarget, modality: Modality)

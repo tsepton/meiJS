@@ -65,6 +65,8 @@ object Database {
   def collect[A](pf: PartialFunction[Data, A]): List[A] =
     _events.collect(pf)
 
+  def contains(data: Data): Boolean = _events.contains(data)
+
   def sortBy(f: Data => Boolean): List[Data] = _events.sortBy(f)
 
   def sortWith(f: (Data, Data) => Boolean): List[Data] = _events.sortWith(f)

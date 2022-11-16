@@ -16,6 +16,10 @@ trait Data {
   def validUntil: Long = emissionTime + validationDelay.toSeconds
 
   def event: Event
+
+  override def toString: String = f"""Data with event: $event
+  |   emissionTime: $emissionTime
+  |   validUntil: $validUntil""".stripMargin
 }
 
 case object Data {

@@ -10,13 +10,14 @@ case class StateMachineWrapper(
     event: CompositeEvent,
     f: CompositeEvent => StateMachine
 ) {
-  // TODO add a timer
-  // TODO see article - somes nodes are said to be unstable ! this represents the timing of the and operator
   private val machine: StateMachine = f(event)
-  private val stateMuterInterval: SetIntervalHandle =
-    js.timers.setInterval(50) {
-      processNewEvents()
-    }
+  private val stateMuterInterval: SetIntervalHandle = js.timers.setInterval(50) {
+    processNewEvents()
+  }
+  private val timeoutInterval: SetIntervalHandle = js.timers.setInterval(2000) {
+    currentState = machine.startState
+  }
+  // TODO see article - somes nodes are said to be unstable ! this represents the timing of the and operator
   private var currentState: State    = machine.startState
   private var lastEmissionTime: Long = 0
 
@@ -26,16 +27,22 @@ case class StateMachineWrapper(
         case data: Data if data.emissionTime > lastEmissionTime => data
       }
     newDataOrdered.lastOption.foreach(e => lastEmissionTime = e.emissionTime)
-    newDataOrdered.map(_.event).foreach {
-      // TODO: speech.put =>
-      //    if (currentState.event.modality == speech && currentState.event.semantic == put) then updating state
-      // TODO: put => if (currentState.event.semantic == put) then updating state
-      // Event trait has to specify its Modality
-      case e: AtomicEvent if currentState.events.contains(e) =>
-        if (machine.endState == currentState.transitions(e))
-          Database += Data from event
-        else currentState = currentState.transitions(e)
-    }
+    newDataOrdered
+      .map(_.event)
+      .collect { case event: AtomicEvent => event }
+      .foreach { e =>
+        val maybeNextState = currentState.events.find(e => e.name == e.name)
+        //.filter(event => if (maybeModality.isDefined) currentState.events.exists(e => e.modality == maybeModality.get) else true) TODO
+        if (maybeNextState.isDefined) {
+          val nextState = maybeNextState.map(currentState.transitions).get
+          if (nextState == machine.endState) {
+            Database += Data from event
+          } else currentState = nextState
+        }
+      }
+    // TODO: speech.put =>
+    //    if (currentState.event.modality == speech && currentState.event.semantic == put) then updating state
+    // TODO: put => if (currentState.event.semantic == put) then updating state
   }
 
 }

@@ -8,8 +8,6 @@ object Registry {
 
   private val _registry: ListBuffer[CompositeEvent] = ListBuffer()
 
-  def registry: List[CompositeEvent] = _registry.toList
-
   /** Alias for register
     */
   def +=(compositeEvent: CompositeEvent): Unit = register(compositeEvent)
@@ -25,6 +23,9 @@ object Registry {
     */
   def clean(): Unit = _registry.clear()
 
-  def get(expression: CompositeExpression): Option[CompositeEvent] = registry.find(_.expression == expression)
+  def get(expression: CompositeExpression): Option[CompositeEvent] =
+    list.find(_.expression == expression)
+
+  def list: List[CompositeEvent] = _registry.toList
 
 }
