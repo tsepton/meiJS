@@ -1,6 +1,6 @@
 package meijs
 
-import meijs.api.event_system.MultimodalEventSystem
+import meijs.api.event_system.EventSystem
 import meijs.eventbase.Database
 import org.scalajs.dom
 
@@ -32,14 +32,13 @@ object MeiJS {
     // APIs activation
     if (config.useEventSystem) enableEventSystem(50)
 
-    // Faking fusion event creation
-    /*    js.timers.setInterval(1000) {
-      EventBase += CompletedCommand()
-    }*/
+//    js.timers.setInterval(1000) {
+//      window.console.log(Database.length)
+//    }
   }
 
   private def enableEventSystem(intervalInMs: Int = 50): Unit = {
-    MultimodalEventSystem.init(intervalInMs)
+    EventSystem.init(intervalInMs)
     dom.console.info("Event System Interface successfully enabled")
   }
 

@@ -9,6 +9,8 @@ object Database {
 
   private var _events: List[Data] = Nil
 
+  def events: List[Data] = _events
+
   /** Set an interval for the garbage collector object to run and remove all the invalid data inside the event base
     *
     * @param ms the time in milliseconds for an interval to run the garbage collector task
@@ -60,14 +62,17 @@ object Database {
 
   def foreach(f: Data => Boolean): Unit = _events.foreach(f)
 
-  def collect[A <: Data](pf: PartialFunction[Data, A]): List[A] =
+  def collect[A](pf: PartialFunction[Data, A]): List[A] =
     _events.collect(pf)
 
   def sortBy(f: Data => Boolean): List[Data] = _events.sortBy(f)
 
   def sortWith(f: (Data, Data) => Boolean): List[Data] = _events.sortWith(f)
 
-  override def toString: String = _events.map(event => "test").toString
+  def length: Int = _events.length
+
+  override def toString: String =
+    _events.map(data => data.toString).toString // TODO
 
   /** The garbage collector should be the only way to remove data from the internal _events list
     */

@@ -2,6 +2,6 @@ package meijs.modality
 
 /** Modality should implement this trait
   */
-trait Modality {
+trait ModalityInterpreter {
   def init(): Unit
 }
