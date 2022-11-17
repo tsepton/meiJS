@@ -30,7 +30,8 @@ object MeiJS {
     // EventBase
     Database.init(50 * 2)
 
-    Test.test()
+    //Test.test()
+    Test.reg()
 
     // Modalities activation
     modality.dom.DomInterpreter.init()
@@ -63,7 +64,7 @@ object Test {
 
   // TODO ! define a scala macro for something like the f string (eg: 'click + 'click)
 
-  Registry.register(putThatThere)
+  def reg(): Unit = Registry.register(putThatThere)
 
   def test(): SetIntervalHandle = scalajs.js.timers.setInterval(100) {
     fakeVoice("put")

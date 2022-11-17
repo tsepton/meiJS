@@ -26,4 +26,6 @@ case object Data {
   def from(e: Event): Data = new Data {
     def event: Event = e
   }
+
+  def from(events: List[Event]): List[Data] = events map from
 }

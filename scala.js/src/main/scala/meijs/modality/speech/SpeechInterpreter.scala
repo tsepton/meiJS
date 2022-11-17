@@ -1,25 +1,27 @@
 package meijs.modality.speech
 
+import meijs.eventbase.Database
+import meijs.eventbase.structures.Data
 import meijs.modality.ModalityInterpreter
 import meijs.modality.speech.web_speech_api._
-import org.scalajs.dom.{Event, console}
 
 import scala.util.Try
 
 object SpeechInterpreter extends ModalityInterpreter {
 
+  val recognition: SpeechRecognition =
+    Try(new SpeechRecognition()).getOrElse(new WebkitSpeechRecognition())
+  val speechRecognitionList: SpeechGrammarList =
+    Try(new SpeechGrammarList()).getOrElse(new WebkitSpeechGrammarList())
+
   override def init(): Unit = {
+    setupRecognitionSettings()
+    setupRecogniserLifecycle()
+    setupEventsHandling()
+  }
 
-    val recognition =
-      Try(new SpeechRecognition()).getOrElse(new WebkitSpeechRecognition())
-    val speechRecognitionList =
-      Try(new SpeechGrammarList()).getOrElse(new WebkitSpeechGrammarList())
-
-    val colors = List(
-      "put",
-      "that",
-      "there"
-    ) // TODO read the MDN documentation
+  private def setupRecognitionSettings(): Unit = {
+    val colors = List("put", "that", "there") // TODO
     val grammar =
       f"#JSGF V1.0; grammar colors; public <color> = ${colors.mkString(" | ")};"
 
@@ -30,12 +32,20 @@ object SpeechInterpreter extends ModalityInterpreter {
     recognition.lang = "en-US"
     recognition.interimResults = true
     recognition.maxAlternatives = 2
-
-    recognition.addEventListener("result", { (e: Event) => console.log(e) }, false)
-
-    recognition.start()
-
   }
 
-  // TODO send result to Database
+  private def setupEventsHandling(): Unit = {
+    recognition.addEventListener(
+      "result",
+      (
+          (e: SpeechRecognitionEvent) =>
+            Database ++= (Data from SpeechEvent.from(e.results))
+      )
+    )
+  }
+
+  private def setupRecogniserLifecycle(): Unit = {
+    // TODO: relaunch the recognition if it stops unexpectedly
+    recognition.start()
+  }
 }
