@@ -10,7 +10,7 @@ case class StateMachineWrapper(
     event: CompositeEvent,
     f: CompositeEvent => StateMachine
 ) {
-  private val machine: StateMachine = f(event)
+  val machine: StateMachine = f(event)
   private val stateMuterInterval: SetIntervalHandle = js.timers.setInterval(50) {
     processNewEvents()
   }

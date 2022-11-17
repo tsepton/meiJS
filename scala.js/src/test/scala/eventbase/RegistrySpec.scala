@@ -1,21 +1,18 @@
 package eventbase
 
 import meijs.eventbase.Registry
-import meijs.eventbase.structures.{
-  AtomicEvent,
-  CompositeEvent,
-  CompositeExpression
-}
+import meijs.eventbase.structures.{AtomicEvent, CompositeEvent, CompositeExpression}
+import meijs.modality.Modality
 import org.scalatest.funsuite.AnyFunSuite
 
 /** Test suite for the Registry object.
   */
 class RegistrySpec extends AnyFunSuite {
 
-  val put: AtomicEvent = MockUpAtomicEvent("put")
-  val that: AtomicEvent = MockUpAtomicEvent("that")
+  val put: AtomicEvent    = MockUpAtomicEvent("put")
+  val that: AtomicEvent   = MockUpAtomicEvent("that")
   val click1: AtomicEvent = MockUpAtomicEvent("click")
-  val there: AtomicEvent = MockUpAtomicEvent("there")
+  val there: AtomicEvent  = MockUpAtomicEvent("there")
   val click2: AtomicEvent = MockUpAtomicEvent("click")
   val putThatThere: CompositeEvent = new CompositeEvent {
     val maybeName: Option[String] = Some("putThatThere")
@@ -23,11 +20,13 @@ class RegistrySpec extends AnyFunSuite {
       put `;` (that + click1) `;` (there | click2)
   }
 
-  case class MockUpAtomicEvent(name: String) extends AtomicEvent
+  case class MockUpAtomicEvent(name: String) extends AtomicEvent {
+    override val modality: Modality = Modality.Voice
+  }
 
   test("Registering simple command") {
     Registry += putThatThere
-    assert(Registry.registry.length == 1)
+    assert(Registry.list.length == 1)
   }
 
 }
