@@ -49,7 +49,7 @@ case class State private (private var _transitions: Map[AtomicEvent, State])(imp
 
 }
 
-case object State {
+object State {
 
   private implicit val commonStateIdentifier: StateIdentifier = StateIdentifier()
 

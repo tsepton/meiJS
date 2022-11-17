@@ -39,10 +39,10 @@ object MeiJS {
     SMRecogniser.init()
 
     // APIs activation
-    if (config.useEventSystem) enableEventSystem(50)
+    if (config.useEventSystem) enableEventSystem(100)
   }
 
-  private def enableEventSystem(intervalInMs: Int = 50): Unit = {
+  private def enableEventSystem(intervalInMs: Int): Unit = {
     EventSystem.init(intervalInMs)
     dom.console.info("Event System Interface successfully enabled")
   }

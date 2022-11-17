@@ -14,35 +14,36 @@ case class StateMachineWrapper(
   private val stateMuterInterval: SetIntervalHandle = js.timers.setInterval(50) {
     processNewEvents()
   }
-  private val timeoutInterval: SetIntervalHandle = js.timers.setInterval(2000) {
+  private val timeoutInterval: SetIntervalHandle = js.timers.setInterval(1000) {
     currentState = machine.startState
   }
+  private var currentState: State = machine.startState
   // TODO see article - somes nodes are said to be unstable ! this represents the timing of the and operator
-  private var currentState: State    = machine.startState
-  private var lastEmissionTime: Long = 0
+  private var lastCheckForEmissionTime: Long = 0
 
+  // TODO : refactor this shitty and unmaintainable method
   private def processNewEvents(): Unit = {
     val newDataOrdered: List[Data] =
       Database.sortWith(_.emissionTime < _.emissionTime).collect {
-        case data: Data if data.emissionTime > lastEmissionTime => data
+        case data: Data if data.emissionTime >= lastCheckForEmissionTime => data
       }
-    newDataOrdered.lastOption.foreach(e => lastEmissionTime = e.emissionTime)
-    newDataOrdered
-      .map(_.event)
-      .collect { case event: AtomicEvent => event }
-      .foreach { e =>
-        val maybeNextState = currentState.events.find(e => e.name == e.name)
-        //.filter(event => if (maybeModality.isDefined) currentState.events.exists(e => e.modality == maybeModality.get) else true) TODO
-        if (maybeNextState.isDefined) {
-          val nextState = maybeNextState.map(currentState.transitions).get
-          if (nextState == machine.endState) {
-            Database += Data from event
-          } else currentState = nextState
+    if (newDataOrdered.nonEmpty) {
+      lastCheckForEmissionTime = newDataOrdered.map(_.emissionTime).max
+      newDataOrdered
+        .map(_.event)
+        .collect { case event: AtomicEvent => event }
+        .foreach { event =>
+          val maybeNextState = currentState.events.find(e => e.name == event.name)
+          //.filter(event => if (maybeModality.isDefined) currentState.events.exists(e => e.modality == maybeModality.get) else true) TODO
+          if (maybeNextState.isDefined) {
+            val nextState = maybeNextState.map(currentState.transitions).get
+            if (nextState == machine.endState) {
+              Database += Data from this.event
+              currentState = machine.startState
+            } else currentState = nextState
+          }
         }
-      }
-    // TODO: speech.put =>
-    //    if (currentState.event.modality == speech && currentState.event.semantic == put) then updating state
-    // TODO: put => if (currentState.event.semantic == put) then updating state
+    }
   }
 
 }
