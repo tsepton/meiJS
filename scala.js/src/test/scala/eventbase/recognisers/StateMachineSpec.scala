@@ -6,38 +6,18 @@ import meijs.eventbase.recognisers.state_machine.{
   StateMachine,
   StateMachineWrapper
 }
-import meijs.eventbase.structures.{AtomicEvent, CompositeEvent, CompositeExpression}
-import meijs.modality.Modality
 import org.scalatest.BeforeAndAfter
 import org.scalatest.funsuite.AnyFunSuite
+
+import scala.language.implicitConversions
 
 /** Test suite for the state_machine package.
   */
 class StateMachineSpec extends AnyFunSuite with BeforeAndAfter {
 
-  val put: AtomicEvent    = MockUpVoiceEvent("put")
-  val that: AtomicEvent   = MockUpVoiceEvent("that")
-  val click1: AtomicEvent = MockUpMouseEvent("click")
-  val there: AtomicEvent  = MockUpVoiceEvent("there")
-  val click2: AtomicEvent = MockUpMouseEvent("click")
+  import eventbase.MockupData._
 
-  val putThatThere: CompositeEvent = new CompositeEvent {
-    val maybeName: Option[String] = Some("putThatThere")
-    val expression: CompositeExpression =
-      put `;` (that + click1) `;` (there | click2)
-  }
-
-  case class MockUpVoiceEvent(name: String) extends AtomicEvent {
-    override val modality: Modality = Modality.Voice
-  }
-
-  case class MockUpMouseEvent(name: String) extends AtomicEvent {
-    override val modality: Modality = Modality.Mouse
-  }
-
-  import scala.language.implicitConversions
-
-  /** wrapper was written after - and I had no plan to update this code */
+  /** wrapper was written after - and I have no plan to update this code */
   implicit def fromWrapperToStateMachineDangerousConverter(
       wrapper: StateMachineWrapper
   ): StateMachine = wrapper.machine
@@ -89,7 +69,7 @@ class StateMachineSpec extends AnyFunSuite with BeforeAndAfter {
     SMRecogniser.sync()
     SMRecogniser.stateMachines.foreach(sm => {
       assert(sm.size == 3)
-      // TODO verify everything else...
+      assert(sm.events.length == 2)
     })
   }
 
@@ -98,7 +78,7 @@ class StateMachineSpec extends AnyFunSuite with BeforeAndAfter {
     SMRecogniser.sync()
     SMRecogniser.stateMachines.foreach(sm => {
       assert(sm.size == 4)
-      // TODO verify everything else...
+      assert(sm.events.length == 2)
     })
   }
 
@@ -118,6 +98,15 @@ class StateMachineSpec extends AnyFunSuite with BeforeAndAfter {
     SMRecogniser.stateMachines.foreach(sm => {
       assert(sm.size == 2)
       assert(sm.events.length == 2)
+    })
+  }
+
+  test("Ensure put that there example is correct") {
+    Registry += (put `;` (that + click1) `;` (there + click2))
+    SMRecogniser.sync()
+    SMRecogniser.stateMachines.foreach(sm => {
+      assert(sm.size == 8)
+      assert(sm.events.length == 5)
     })
   }
 

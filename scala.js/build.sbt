@@ -1,5 +1,3 @@
-import Dependencies._
-
 ThisBuild / scalaVersion := "2.13.8"
 ThisBuild / version := "1.0.0"
 ThisBuild / organization := "be.tsepton"
@@ -11,8 +9,12 @@ lazy val root = (project in file("."))
   .enablePlugins(BuildInfoPlugin)
   .settings(
     name := "MeiJS",
-    libraryDependencies += scalaTest % Test,
     buildInfoPackage := "meijs",
+    // Dependencies
+    libraryDependencies ++= List(
+      "org.scala-js"  %%% "scalajs-dom" % "2.1.0",
+      "org.scalatest" %%% "scalatest"   % "3.2.14"
+    ),
     buildInfoKeys := Seq[BuildInfoKey](
       name,
       version,
@@ -24,22 +26,14 @@ lazy val root = (project in file("."))
 val author = "tsepton"
 scalacOptions ++= Seq("-deprecation", "-feature")
 
-// Dependencies
-libraryDependencies ++= List(
-  "org.scala-js" %%% "scalajs-dom" % "2.1.0"
-)
+enablePlugins(JavascriptModulePlugin)
 
-// ScalaJS RELATED
 Compile / mainClass := Some("meijs.MeiJS")
 scalaJSUseMainModuleInitializer := true
-scalaJSLinkerConfig ~= {
+webpackBundlingMode := BundlingMode.LibraryAndApplication()
+Test / scalaJSLinkerConfig ~= {
+  _.withModuleKind(ModuleKind.CommonJSModule)
+}
+Compile / scalaJSLinkerConfig ~= {
   _.withModuleKind(ModuleKind.ESModule)
 }
-// ScalaJS bundle RELATED
-// see https://scalacenter.github.io/scalajs-bundler/cookbook.html
-webpackBundlingMode := BundlingMode
-  .LibraryAndApplication() // Export multiple entry points
-
-// Tasks related
-// NPM package generation
-enablePlugins(JavascriptModulePlugin)
