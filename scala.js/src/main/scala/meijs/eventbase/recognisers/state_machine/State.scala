@@ -10,7 +10,10 @@ import meijs.eventbase.structures.AtomicEvent
   *
   * @param _transitions : Event is an event leading to other state
   */
-case class State private (private var _transitions: Map[AtomicEvent, State])(implicit
+case class State private (
+    private var _transitions: Map[AtomicEvent, State],
+    stable: Boolean = true
+)(implicit
     val stateIdentifier: StateIdentifier
 ) {
 

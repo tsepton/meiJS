@@ -46,6 +46,8 @@ class StateMachineMutable private () extends StateMachine {
   /** A new state machine is returned which was built using all possible event permutations from this and that.
     * See: "A domain-specific textual language for rapid prototyping of multimodal interactive systems"
     *
+    * TODO : Unstable nodes
+    *
     * @param that : The StateMachine to do the event permutations with this
     * @return this
     */
@@ -101,12 +103,15 @@ class StateMachineMutable private () extends StateMachine {
     }
   }
 
-  private def connectedStates(to: State): List[State] =
-    states.filter(_.children.contains(to))
-
   def isEmpty: Boolean = startState.events.isEmpty
 
   override def toString: String = states.map(_.toString).toString
+
+  def states: List[State] =
+    visitState(Root(startState)).flatten.map(_.state).distinct
+
+  private def connectedStates(to: State): List[State] =
+    states.filter(_.children.contains(to))
 
   private def allPaths: List[Path] = visitState(Root(startState)).map(_.map {
     case Branch(_, eventFromParent) => Some(eventFromParent)
@@ -135,9 +140,6 @@ class StateMachineMutable private () extends StateMachine {
     }
     target
   }
-
-  def states: List[State] =
-    visitState(Root(startState)).flatten.map(_.state).distinct
 
 }
 

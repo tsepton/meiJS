@@ -2,6 +2,7 @@ package meijs.modality.speech
 
 import meijs.eventbase.structures.AtomicEvent
 import meijs.modality.Modality
+import meijs.modality.speech.web_speech_api.SpeechRecognitionResultList.toList
 import meijs.modality.speech.web_speech_api.{
   SpeechRecognitionResult,
   SpeechRecognitionResultList
@@ -21,12 +22,18 @@ object SpeechEvent {
       alt.transcript.split(" ").toList match {
         case words if words.length == 1 => List(Word(words.head))
         case words =>
-          List(List(Sentence(alt.transcript)), words.map(str => Word(str))).flatten
+          List(
+            List(Sentence(alt.transcript.trim)),
+            words.map(str => Word(str))
+          ).flatten
       }
     )
 
-  def from(results: SpeechRecognitionResultList): List[SpeechEvent] =
+  def from(results: List[SpeechRecognitionResult]): List[SpeechEvent] =
     results.flatMap(result => from(result))
+
+  def from(results: SpeechRecognitionResultList): List[SpeechEvent] =
+    from(toList(results))
 
 }
 

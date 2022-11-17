@@ -31,15 +31,20 @@ object SpeechInterpreter extends ModalityInterpreter {
     recognition.continuous = true
     recognition.lang = "en-US"
     recognition.interimResults = true
-    recognition.maxAlternatives = 2
+    recognition.maxAlternatives = 1
   }
 
   private def setupEventsHandling(): Unit = {
     recognition.addEventListener(
       "result",
       (
-          (e: SpeechRecognitionEvent) =>
-            Database ++= (Data from SpeechEvent.from(e.results))
+          (e: SpeechRecognitionEvent) => {
+            // we asked for interim results => final has already treated data
+            val unprocessed = e.results.filterNot(_.isFinal)
+            // FIXME unprocessed still has already processed words !
+            //console.log(SpeechEvent.from(unprocessed).map(_.name.trim).toJSArray)
+            Database ++= (Data from SpeechEvent.from(unprocessed))
+          }
       )
     )
   }
