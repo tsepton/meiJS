@@ -7,6 +7,8 @@ import scala.scalajs.js.annotation.{JSExportAll, JSExportTopLevel}
 
 // TODO : read this for multiple module exports : https://www.scala-js.org/doc/project/module.html
 
+// TODO : a javascript wrapper for the dsl
+// Work in progress...
 @JSExportTopLevel("modality")
 @JSExportAll
 object ModalityFacade {
@@ -31,6 +33,7 @@ object ModalityFacade {
 @JSExportTopLevel("event")
 @JSExportAll
 object EventFacade {
+
   import scala.language.implicitConversions
 
   class JSAtomicEvent(override val name: String, override val modality: Modality)
