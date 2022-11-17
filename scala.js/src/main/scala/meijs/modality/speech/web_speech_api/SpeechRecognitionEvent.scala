@@ -26,3 +26,8 @@ class SpeechRecognitionEvent(typeArg: String) extends Event(typeArg) {
   val emma: String = js.native
 
 }
+
+@js.native
+@JSGlobal("webkitSpeechRecognitionEvent")
+class WebkitSpeechRecognitionEvent(typeArg: String)
+    extends SpeechRecognitionEvent(typeArg)

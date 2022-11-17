@@ -5,15 +5,14 @@ import org.scalajs.dom.EventTarget
 import scala.scalajs.js
 import scala.scalajs.js.annotation.JSGlobal
 
+/** The SpeechRecognition interface of the Web Speech API is the controller interface for the recognition service; this also handles the SpeechRecognitionEvent sent from the recognition service. */
 @js.native
 @JSGlobal
-/** The SpeechRecognition interface of the Web Speech API is the controller interface for the recognition service; this also handles the SpeechRecognitionEvent sent from the recognition service.
-  */
 class SpeechRecognition extends EventTarget {
 
   /** Returns and sets a collection of SpeechGrammar objects that represent the grammars that will be understood by the current SpeechRecognition.
     */
-  var grammars: SpeechGrammar = js.native
+  var grammars: SpeechGrammarList = js.native
 
   /** Returns and sets the language of the current SpeechRecognition. If not specified, this defaults to the HTML lang attribute value, or the user agent's language setting if that isn't set either.
     */
@@ -45,3 +44,7 @@ class SpeechRecognition extends EventTarget {
 
   // TODO events : https://developer.mozilla.org/en-US/docs/Web/API/SpeechRecognition#events
 }
+
+@js.native
+@JSGlobal("webkitSpeechRecognition")
+class WebkitSpeechRecognition extends SpeechRecognition

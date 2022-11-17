@@ -34,6 +34,7 @@ object MeiJS {
 
     // Modalities activation
     modality.dom.DomInterpreter.init()
+    modality.speech.SpeechInterpreter.init()
     SMRecogniser.init()
 
     // APIs activation

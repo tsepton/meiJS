@@ -48,3 +48,7 @@ class SpeechGrammarList extends js.Object {
   def item(index: Int): SpeechGrammar = js.native
 
 }
+
+@js.native
+@JSGlobal("webkitSpeechGrammarList")
+class WebkitSpeechGrammarList extends SpeechGrammarList
