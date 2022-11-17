@@ -73,6 +73,9 @@ object Database {
 
   def length: Int = _events.length
 
+  /** Should only be used for debug purposes */
+  def clear(): Unit = _events = Nil
+
   override def toString: String =
     _events.map(data => data.toString).toString // TODO
 
