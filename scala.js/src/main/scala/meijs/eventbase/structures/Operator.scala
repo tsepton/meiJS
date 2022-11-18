@@ -4,7 +4,7 @@ import scala.language.implicitConversions
 
 sealed trait CompositeExpression {
   override def toString: String =
-    "todo" // TODO - Create a human readable simplified composite expresssion
+    "todo" // TODO - Create a human readable simplified composite expression
 }
 
 case object CompositeExpression {

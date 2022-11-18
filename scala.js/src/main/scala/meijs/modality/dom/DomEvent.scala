@@ -5,6 +5,9 @@ import meijs.modality.Modality
 import meijs.modality.Modality.{Keyboard, Mouse}
 import org.scalajs.{dom => domjs}
 
+import scala.scalajs.js.annotation.JSExportAll
+
+@JSExportAll
 case class DomEvent(name: String, target: domjs.EventTarget, modality: Modality)
     extends AtomicEvent
 

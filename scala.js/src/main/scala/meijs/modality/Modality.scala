@@ -13,6 +13,8 @@ trait Modality {
     }
   }
 
+  override def toString: String = this.getClass.getName.split("\\$").last
+
 }
 
 object Modality {
