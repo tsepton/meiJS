@@ -1,6 +1,7 @@
 package eventbase
 
 import meijs.eventbase.Registry
+import meijs.eventbase.structures.CompositeEvent
 import org.scalatest.funsuite.AnyFunSuite
 
 /** Test suite for the Registry object.
@@ -16,7 +17,12 @@ class RegistrySpec extends AnyFunSuite {
 
   test("Registering and getting back simple command") {
     Registry += putThatThere
-    assert(Registry.get(putThatThere.expression).get == putThatThere)
+    assert(
+      Registry.list
+        .collect { case c: CompositeEvent => c }
+        .find(_.expression == putThatThere.expression)
+        .get == putThatThere
+    )
   }
 
 }

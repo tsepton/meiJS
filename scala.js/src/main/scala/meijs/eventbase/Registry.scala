@@ -1,31 +1,32 @@
 package meijs.eventbase
 
-import meijs.eventbase.structures.{CompositeEvent, CompositeExpression}
+import meijs.eventbase.structures.{CompositeEvent, Event}
 
 import scala.collection.mutable.ListBuffer
 
-object Registry {
+object Registry { // FIXME: One can register simple atomic event
 
-  private val _registry: ListBuffer[CompositeEvent] = ListBuffer()
+  private val _registry: ListBuffer[Event] = ListBuffer()
 
   /** Alias for register
     */
-  def +=(compositeEvent: CompositeEvent): Unit = register(compositeEvent)
+  def +=[A <: Event](event: A): Unit = register(event)
 
   /** Register the declaration of a composite event so that its occurrence will be handled by the framework.
     *
-    * @param compositeEvent : the composite event to register
+    * @param event : the composite event to register
     */
-  def register(compositeEvent: CompositeEvent): Unit =
-    _registry += compositeEvent
+  def register[A <: Event](event: A): Unit =
+    _registry += event
 
   /** Erase this internal state by erasing all previously registered events
     */
   def clean(): Unit = _registry.clear()
 
-  def get(expression: CompositeExpression): Option[CompositeEvent] =
-    list.find(_.expression == expression)
+  def list: List[Event] = _registry.toList
 
-  def list: List[CompositeEvent] = _registry.toList
+  def compositeEvents: List[CompositeEvent] = _registry.toList.collect {
+    case e: CompositeEvent => e
+  }
 
 }
