@@ -21,3 +21,14 @@ class SpeechRecognitionResult extends js.Object {
     */
   def item(index: Int): SpeechRecognitionAlternative = js.native
 }
+
+object SpeechRecognitionResult {
+
+  import scala.language.implicitConversions
+
+  implicit def toList(
+      result: SpeechRecognitionResult
+  ): List[SpeechRecognitionAlternative] =
+    (0 until result.length).map(result.item).toList
+
+}
