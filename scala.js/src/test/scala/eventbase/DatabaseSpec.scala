@@ -19,7 +19,7 @@ class DatabaseSpec extends AnyFunSuite with BeforeAndAfter with BeforeAndAfterAl
 
   test("Add event into database") {
     assert(Database.length == 0)
-    Database += Data from putThatThere
+    Database += Data.from(putThatThere, Nil)
     assert(Database.length == 1)
   }
 

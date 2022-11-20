@@ -36,8 +36,8 @@ class StateMachineSpec extends AnyFunSuite with BeforeAndAfter {
   test(
     "Test the state method from a state machine instance"
   ) {
-    Registry += put.*()
-    Registry += put `;` that
+    Registry += putMultipleTimes
+    Registry += putFollowedByThat
     SMRecogniser.sync()
     SMRecogniser.stateMachines.zipWithIndex.foreach { case (sm, index) =>
       assert(sm.states.length == sm.size)
@@ -47,7 +47,7 @@ class StateMachineSpec extends AnyFunSuite with BeforeAndAfter {
   }
 
   test("Ensure basic overlay operation is correct") {
-    Registry += put | that
+    Registry += putOrThat
     SMRecogniser.sync()
     SMRecogniser.stateMachines.foreach(sm => {
       assert(sm.size == 2)
@@ -56,7 +56,7 @@ class StateMachineSpec extends AnyFunSuite with BeforeAndAfter {
   }
 
   test("Ensure overlay do not duplicate same event") {
-    Registry += put | put
+    Registry += putOrPut
     SMRecogniser.sync()
     SMRecogniser.stateMachines.foreach(sm => {
       assert(sm.size == 2)
@@ -65,7 +65,7 @@ class StateMachineSpec extends AnyFunSuite with BeforeAndAfter {
   }
 
   test("Ensure basic concatenate operation is correct") {
-    Registry += put `;` that
+    Registry += putFollowedByThat
     SMRecogniser.sync()
     SMRecogniser.stateMachines.foreach(sm => {
       assert(sm.size == 3)
@@ -74,7 +74,7 @@ class StateMachineSpec extends AnyFunSuite with BeforeAndAfter {
   }
 
   test("Ensure basic permute operation is correct") {
-    Registry += put + that
+    Registry += putPlusThat
     SMRecogniser.sync()
     SMRecogniser.stateMachines.foreach(sm => {
       assert(sm.size == 4)
@@ -83,7 +83,7 @@ class StateMachineSpec extends AnyFunSuite with BeforeAndAfter {
   }
 
   test("Ensure basic loop operation is correct") {
-    Registry += that.*()
+    Registry += putMultipleTimes
     SMRecogniser.sync()
     SMRecogniser.stateMachines.foreach(sm => {
       assert(sm.size == 1)
@@ -93,7 +93,7 @@ class StateMachineSpec extends AnyFunSuite with BeforeAndAfter {
   }
 
   test("Ensure complex loop operation is correct") {
-    Registry += (put `;` that).*()
+    Registry += selectThis
     SMRecogniser.sync()
     SMRecogniser.stateMachines.foreach(sm => {
       assert(sm.size == 2)
@@ -102,7 +102,7 @@ class StateMachineSpec extends AnyFunSuite with BeforeAndAfter {
   }
 
   test("Ensure put that there example is correct") {
-    Registry += (put `;` (that + click1) `;` (there + click2))
+    Registry += putThatThere
     SMRecogniser.sync()
     SMRecogniser.stateMachines.foreach(sm => {
       assert(sm.size == 8)
