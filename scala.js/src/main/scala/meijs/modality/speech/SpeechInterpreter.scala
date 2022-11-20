@@ -5,6 +5,7 @@ import meijs.eventbase.structures.Data
 import meijs.modality.ModalityInterpreter
 import meijs.modality.speech.web_speech_api._
 
+import scala.collection.mutable.ListBuffer
 import scala.util.Try
 
 object SpeechInterpreter extends ModalityInterpreter {
@@ -21,31 +22,30 @@ object SpeechInterpreter extends ModalityInterpreter {
   }
 
   private def setupRecognitionSettings(): Unit = {
-    val colors = List("put", "that", "there") // TODO
-    val grammar =
-      f"#JSGF V1.0; grammar colors; public <color> = ${colors.mkString(" | ")};"
-
-    speechRecognitionList.addFromString(grammar, 1)
+    // TODO
+    // val colors: List[String] = Registry.list.map(_.name)
+    // val grammar = f"#JSGF V1.0; grammar colors; public <color> = ${colors.mkString(" | ")};"
+    // speechRecognitionList.addFromString(grammar, 1)
 
     recognition.grammars = speechRecognitionList
     recognition.continuous = true
     recognition.lang = "en-US"
     recognition.interimResults = true
-    recognition.maxAlternatives = 1
+    recognition.maxAlternatives = 5
   }
 
   private def setupEventsHandling(): Unit = {
+    val buffer: ListBuffer[String] = ListBuffer()
     recognition.addEventListener(
       "result",
-      (
-          (e: SpeechRecognitionEvent) => {
-            // we asked for interim results => final has already treated data
-            val unprocessed = e.results.filterNot(_.isFinal)
-            // FIXME unprocessed still has already processed words !
-            //console.log(SpeechEvent.from(unprocessed).map(_.name.trim).toJSArray)
-            Database ++= (Data from SpeechEvent.from(unprocessed))
-          }
-      )
+      { (e: SpeechRecognitionEvent) =>
+        val unprocessed = e.results.last
+        if (unprocessed.isFinal) buffer.clear()
+        else {
+          buffer appendAll SpeechEvent.from(unprocessed).map(_.name)
+          Database ++= (Data from SpeechEvent.from(unprocessed))
+        }
+      }
     )
   }
 
