@@ -4,7 +4,7 @@ import meijs.eventbase.structures.{CompositeEvent, Event}
 
 import scala.collection.mutable.ListBuffer
 
-object Registry { // FIXME: One can register simple atomic event
+object Registry {
 
   private val _registry: ListBuffer[Event] = ListBuffer()
 
