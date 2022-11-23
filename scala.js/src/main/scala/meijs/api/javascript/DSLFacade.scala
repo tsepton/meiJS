@@ -1,4 +1,4 @@
-package meijs.api.facade
+package meijs.api.javascript
 
 import meijs.eventbase.structures.{AtomicEvent, CompositeExpression, Event}
 import meijs.modality.Modality

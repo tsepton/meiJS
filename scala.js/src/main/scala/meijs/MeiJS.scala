@@ -1,6 +1,6 @@
 package meijs
 
-import meijs.api.event_system.EventSystem
+import meijs.api.javascript.JSEventSystem
 import meijs.eventbase.recognisers.state_machine.SMRecogniser
 import meijs.eventbase.structures.{CompositeEvent, CompositeExpression}
 import meijs.eventbase.{Database, Registry}
@@ -14,7 +14,7 @@ import scala.scalajs.js.annotation.JSExportTopLevel
 object MeiJS {
 
   val putThatThere: CompositeEvent = new CompositeEvent {
-    override val maybeName: Option[String] = Some("put-that-there")
+    override val name: String                    = "put-that-there"
     override val expression: CompositeExpression =
       Modality.Voice("put") `;`
         (Modality.Mouse("click") + Modality.Voice("that")) `;`
@@ -22,7 +22,7 @@ object MeiJS {
   }
 
   val updateThatColor: CompositeEvent = new CompositeEvent {
-    override val maybeName: Option[String] = Some("update-that-color")
+    override val name: String                    = "update-that-color"
     override val expression: CompositeExpression = Modality.Voice("update") `;`
       (Modality.Voice("that") + Modality.Mouse("click")) `;`
       Modality.Voice("colour")
@@ -57,7 +57,7 @@ object MeiJS {
   }
 
   private def enableEventSystem(intervalInMs: Int): Unit = {
-    EventSystem.init(intervalInMs)
+    JSEventSystem.init(intervalInMs)
     dom.console.info("Event System Interface successfully enabled")
   }
 

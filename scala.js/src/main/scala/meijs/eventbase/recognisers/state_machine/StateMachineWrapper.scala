@@ -15,12 +15,17 @@ case class StateMachineWrapper(
   private val stateMuterInterval: SetIntervalHandle = js.timers.setInterval(100) {
     processNewEvents()
   }
-  private val timeoutInterval: SetIntervalHandle = js.timers.setInterval(5000) {
-    reset()
-  }
   private var occurrence: List[AtomicEvent]  = Nil
   private var currentState: State            = machine.startState
   private var lastCheckForEmissionTime: Long = 0
+  // if no new events happen during that interval, it will trigger a reset
+  private var timeoutInterval = setTimeoutInterval()
+
+  private def setTimeoutInterval(): SetIntervalHandle = js.timers.setInterval(5000) {
+    reset()
+  }
+
+  private def clearTimeoutInterval(): Unit = js.timers.clearInterval(timeoutInterval)
 
   private def processNewEvents(): Unit = {
     val unprocessed: List[Data] =
@@ -40,14 +45,16 @@ case class StateMachineWrapper(
     currentState.events
       .find(e => e.name == event.name)
       .map(e => {
+        clearTimeoutInterval()
         occurrence = occurrence appended event
         currentState.transitions(e)
-      }) // get state from event
+      })
       .foreach(nextState => {
         if (nextState == machine.endState) {
           emit(occurrence)
           reset()
         } else currentState = nextState
+        timeoutInterval = setTimeoutInterval()
       })
   }
 

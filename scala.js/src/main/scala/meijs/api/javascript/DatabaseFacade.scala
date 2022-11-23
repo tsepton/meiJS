@@ -1,4 +1,4 @@
-package meijs.api.facade
+package meijs.api.javascript
 
 import meijs.eventbase.Database
 import meijs.eventbase.structures.Data

@@ -9,10 +9,13 @@ import scala.scalajs.js.annotation.JSExport
   * Therefore, it is used inside the Database as the representation of an event that happened.
   */
 trait Data {
+
   import scala.scalajs.js.JSConverters._
 
+  @JSExport
   val validationDelay: FiniteDuration = 1.seconds // TODO
 
+  @JSExport
   val emissionTime: Long = System.currentTimeMillis / 1000
 
   @JSExport
@@ -23,8 +26,10 @@ trait Data {
   @JSExport("occurrence")
   def jsOccurrence: js.Array[AtomicEvent] = occurrence.toJSArray
 
+  @JSExport
   def isValid: Boolean = validUntil > (System.currentTimeMillis / 1000)
 
+  @JSExport
   def validUntil: Long = emissionTime + validationDelay.toSeconds
 
   override def toString: String =

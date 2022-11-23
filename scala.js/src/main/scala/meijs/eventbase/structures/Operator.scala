@@ -8,11 +8,13 @@ sealed trait CompositeExpression {
 }
 
 case object CompositeExpression {
-  implicit def toCompositeEvent(e: CompositeExpression): CompositeEvent =
+  implicit def toCompositeEvent(e: CompositeExpression): CompositeEvent = {
+    val self = this
     new CompositeEvent {
-      override val maybeName: Option[String]       = Option.empty
+      override val name: String                    = self.toString
       override val expression: CompositeExpression = e
     }
+  }
 }
 
 final case class And(left: Event, right: Event)

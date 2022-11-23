@@ -11,6 +11,7 @@ import meijs.modality.Modality
 import meijs.modality.Modality.{Mouse, Voice}
 
 object MockupData {
+
   val put: AtomicEvent    = MockUpVoiceEvent("put")
   val that: AtomicEvent   = MockUpVoiceEvent("that")
   val click1: AtomicEvent = MockUpMouseEvent("click1")
@@ -18,48 +19,48 @@ object MockupData {
   val click2: AtomicEvent = MockUpMouseEvent("click2")
 
   val putMultipleTimes: CompositeEvent = new CompositeEvent {
-    val maybeName: Option[String]       = Some("putMultipleTimes")
+    val name: String                    = "putMultipleTimes"
     val expression: CompositeExpression = put.*()
   }
 
   val putPlusThat: CompositeEvent = new CompositeEvent {
-    val maybeName: Option[String] = Some("putThatThere")
+    val name: String                    = "putThatThere"
     val expression: CompositeExpression =
       (put + that)
   }
 
   val putOrThat: CompositeEvent = new CompositeEvent {
-    val maybeName: Option[String] = Some("putThatThere")
+    val name: String                    = "putThatThere"
     val expression: CompositeExpression =
       (put | that)
   }
 
   val putOrPut: CompositeEvent = new CompositeEvent {
-    val maybeName: Option[String] = Some("putThatThere")
+    val name: String                    = "putThatThere"
     val expression: CompositeExpression =
       (put | put)
   }
 
   val putFollowedByThat: CompositeEvent = new CompositeEvent {
-    val maybeName: Option[String] = Some("putThatThere")
+    val name: String                    = "putThatThere"
     val expression: CompositeExpression =
       put `;` that
   }
 
   val selectThis: CompositeEvent = new CompositeEvent {
-    override val maybeName: Option[String] = Some("selectThis")
+    override val name: String                    = "selectThis"
     override val expression: CompositeExpression =
       Voice("select") `;` Mouse("click").*()
   }
 
   val putThatThere: CompositeEvent = new CompositeEvent {
-    val maybeName: Option[String] = Some("putThatThere")
+    val name: String                    = "putThatThere"
     val expression: CompositeExpression =
-      put `;` (that + click1) `;` (there | click2)
+      put `;` (that + click1) `;` (there + click2)
   }
 
   val sayHi: CompositeEvent = new CompositeEvent {
-    override val maybeName: Option[String] = Some("sayHi")
+    override val name: String                    = "sayHi"
     override val expression: CompositeExpression =
       Voice("say hi") + Mouse("click")
   }

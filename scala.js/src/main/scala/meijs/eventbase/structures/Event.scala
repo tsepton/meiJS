@@ -2,13 +2,14 @@ package meijs.eventbase.structures
 
 import meijs.modality.Modality
 
-import scala.scalajs.js
 import scala.scalajs.js.annotation.{JSExport, JSExportAll}
 
 /** Represents a finite event emitted by a modality.
   */
 @JSExportAll
 trait Event {
+  // Must be unique !
+  val name: String
 
   def `;`(e: Event): CompositeExpression = followedBy(e)
 
@@ -26,6 +27,7 @@ trait Event {
 
   def iteration: CompositeExpression = Iteration(this)
 
+  override def equals(obj: Any): Boolean = ??? // TODO name = obj.name
 }
 
 /** Event happening instantaneously
@@ -33,27 +35,19 @@ trait Event {
   * eg: mouse click
   */
 trait AtomicEvent extends Event {
-  val name: String
   val modality: Modality
 
-  @JSExport("name")
-  def jsName: String = name
-
   @JSExport("modality")
-  def jsModality: String = Modality.toString
+  def jsModality: String = modality.toString
 
   override def toString: String = name
 }
 
-/** Description of an avent composed of atomic event, happening over a period of time
+/** Description of an event composed of atomic events, happening over a period of time
   */
 trait CompositeEvent extends Event {
-  val maybeName: Option[String]
+
   val expression: CompositeExpression
 
-  @JSExport
-  def name: js.UndefOr[String] =
-    if (maybeName.isDefined) maybeName.get else js.undefined
-
-  override def toString: String = maybeName.getOrElse(expression.toString)
+  override def toString: String = name
 }

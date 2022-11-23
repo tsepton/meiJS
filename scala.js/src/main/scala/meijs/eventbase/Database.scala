@@ -76,8 +76,7 @@ object Database {
   /** Should only be used for debug purposes */
   def clear(): Unit = _events = Nil
 
-  override def toString: String =
-    _events.map(data => data.toString).toString // TODO
+  override def toString: String = _events.map(data => data.toString).toString
 
   /** The garbage collector should be the only way to remove data from the internal _events list
     */

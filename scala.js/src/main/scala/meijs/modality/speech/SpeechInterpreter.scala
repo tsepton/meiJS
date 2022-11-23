@@ -10,7 +10,7 @@ import scala.util.Try
 
 object SpeechInterpreter extends ModalityInterpreter {
 
-  val recognition: SpeechRecognition =
+  val recognition: SpeechRecognition           =
     Try(new SpeechRecognition()).getOrElse(new WebkitSpeechRecognition())
   val speechRecognitionList: SpeechGrammarList =
     Try(new SpeechGrammarList()).getOrElse(new WebkitSpeechGrammarList())
@@ -31,7 +31,7 @@ object SpeechInterpreter extends ModalityInterpreter {
     recognition.continuous = true
     recognition.lang = "en-US"
     recognition.interimResults = true
-    recognition.maxAlternatives = 5
+    recognition.maxAlternatives = 3
   }
 
   private def setupEventsHandling(): Unit = {
