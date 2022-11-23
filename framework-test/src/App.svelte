@@ -1,7 +1,15 @@
 <script>
   import * as meiJS from "@tsepton/MeiJS";
+  import { dsl } from "@tsepton/MeiJS";
   import { eventSystem } from "@tsepton/MeiJS";
   import ExportedLib from "./component/ExportedLib.svelte";
+
+  const expr = dsl
+    .voice("update")
+    .then(dsl.voice("click").and(dsl.voice("that")))
+    .then(dsl.voice("color"));
+
+  const updateThatColor = new meiJS.CompositeEvent("update-that-color", expr);
 
   meiJS.enable({
     useEventSystem: true,
@@ -18,18 +26,24 @@
   //   .then(click.and(put).and().and())
   //   .then(and(click, put, , ))
 
-  eventSystem.subscribe("put-that-there", (e) => {
-    console.log("putting that there...");
-    const clicks = e.source.occurrence.filter((occ) => occ.name === "click");
-    const colours = clicks.map((click) => click.target.style.backgroundColor);
-    clicks[0].target.style.backgroundColor = colours[1];
-    clicks[1].target.style.backgroundColor = colours[0];
-  });
+  // const updateThatColor = new meiJS.CompositeEvent {
+  //   override val name: String                    = "update-that-color"
+  //   override val expression: CompositeExpression = Modality.Voice("update") `;`
+  //     (Modality.Voice("that") + Modality.Mouse("click")) `;`
+  //     Modality.Voice("colour")
+  // }
 
-  eventSystem.subscribe("update-that-color", function (e) {
-    console.log("updating color...");
-    e.source.occurrence
-      .filter((occ) => occ.name === "click")
+  // eventSystem.subscribe("put-that-there", (e) => {
+  //   console.log("putting that there...");
+  //   const clicks = e.source.occurrence.filter((occ) => occ.name === "click");
+  //   const colours = clicks.map((click) => click.target.style.backgroundColor);
+  //   clicks[0].target.style.backgroundColor = colours[1];
+  //   clicks[1].target.style.backgroundColor = colours[0];
+  // });
+
+  eventSystem.subscribe(updateThatColor, function (e) {
+    e.occurrences
+      .filter((occ) => occ.name === "click"      )
       .forEach((clickEvent) => {
         clickEvent.target.style.backgroundColor = randomColor();
       });
