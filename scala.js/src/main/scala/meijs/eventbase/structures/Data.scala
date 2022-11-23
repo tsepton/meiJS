@@ -10,26 +10,16 @@ import scala.scalajs.js.annotation.JSExport
   */
 trait Data {
 
-  import scala.scalajs.js.JSConverters._
-
-  @JSExport
   val validationDelay: FiniteDuration = 1.seconds // TODO
 
-  @JSExport
   val emissionTime: Long = System.currentTimeMillis / 1000
 
-  @JSExport
   val event: Event // Event description
 
-  val occurrence: List[AtomicEvent]
+  val occurrences: List[AtomicEvent]
 
-  @JSExport("occurrence")
-  def jsOccurrence: js.Array[AtomicEvent] = occurrence.toJSArray
-
-  @JSExport
   def isValid: Boolean = validUntil > (System.currentTimeMillis / 1000)
 
-  @JSExport
   def validUntil: Long = emissionTime + validationDelay.toSeconds
 
   override def toString: String =
@@ -41,8 +31,8 @@ trait Data {
 case object Data {
 
   def from(e: AtomicEvent): Data = new Data {
-    val event: Event                  = e
-    val occurrence: List[AtomicEvent] = List(e)
+    val event: Event                   = e
+    val occurrences: List[AtomicEvent] = List(e)
   }
 
   def from(events: List[AtomicEvent]): List[Data] =
@@ -55,8 +45,8 @@ case object Data {
     val e = event
     val o = occurrence
     new Data {
-      val event: Event                  = e
-      val occurrence: List[AtomicEvent] = o
+      val event: Event                   = e
+      val occurrences: List[AtomicEvent] = o
     }
   }
 

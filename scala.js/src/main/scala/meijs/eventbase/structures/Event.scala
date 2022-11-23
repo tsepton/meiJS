@@ -1,12 +1,12 @@
 package meijs.eventbase.structures
 
 import meijs.modality.Modality
+import org.scalajs.dom.console
 
-import scala.scalajs.js.annotation.{JSExport, JSExportAll}
+import scala.scalajs.js.annotation.{JSExport, JSExportAll, JSExportTopLevel}
 
 /** Represents a finite event emitted by a modality.
   */
-@JSExportAll
 trait Event {
   // Must be unique !
   val name: String
@@ -27,7 +27,11 @@ trait Event {
 
   def iteration: CompositeExpression = Iteration(this)
 
-  override def equals(obj: Any): Boolean = ??? // TODO name = obj.name
+  // TODO: does this work ?
+  override def equals(obj: Any): Boolean = obj match {
+    case a: Event => a.name == this.name
+    case _        => false
+  }
 }
 
 /** Event happening instantaneously
@@ -36,15 +40,10 @@ trait Event {
   */
 trait AtomicEvent extends Event {
   val modality: Modality
-
-  @JSExport("modality")
-  def jsModality: String = modality.toString
-
   override def toString: String = name
 }
 
-/** Description of an event composed of atomic events, happening over a period of time
-  */
+/** Description of an event composed of atomic events, happening over a period of time */
 trait CompositeEvent extends Event {
 
   val expression: CompositeExpression

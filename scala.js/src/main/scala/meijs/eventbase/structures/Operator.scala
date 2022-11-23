@@ -2,7 +2,7 @@ package meijs.eventbase.structures
 
 import scala.language.implicitConversions
 
-sealed trait CompositeExpression {
+trait CompositeExpression {
   override def toString: String =
     "todo" // TODO - Create a human readable simplified composite expression
 }

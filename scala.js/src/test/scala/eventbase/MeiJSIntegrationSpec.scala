@@ -19,7 +19,7 @@ class MeiJSIntegrationSpec extends AnyFunSuite {
   }
 
   // TODO for the app integration testing, we'll need a fake dom
-  test("Event emission") {
+  test("Javascript api") {
 
     MeiJS.enable(appConfigWithEventEmission)
     MockupData.defaultEvents.foreach(x => Registry.register(x))
@@ -41,31 +41,6 @@ class MeiJSIntegrationSpec extends AnyFunSuite {
     val n = 10;
     (0 until n).foreach(_ => fakePutThatThereEventOccurrence())
     assertResult(n)(i)
-  }
-
-  // TODO for the app integration testing, we'll need a fake dom
-  test("State machine putting result in db") {
-
-    MeiJS.enable(appConfigWithoutEventEmission)
-    Registry += MockupData.putThatThere
-
-    assert(Registry.list.contains(MockupData.putThatThere))
-
-    MockupData.fakeVoice("put")
-    MockupData.fakeClick()
-    MockupData.fakeVoice("that")
-    MockupData.fakeClick()
-    MockupData.fakeVoice("there")
-
-    val dataList = Database.filter(_.event == MockupData.putThatThere)
-    assert(dataList.length == 1)
-    dataList.flatMap(data => data.occurrence).zipWithIndex.foreach {
-      case (e, 0) => e.name == "put"
-      case (e, 1) => e.name == "click"
-      case (e, 2) => e.name == "that"
-      case (e, 3) => e.name == "click"
-      case (e, 4) => e.name == "there"
-    }
   }
 
 }

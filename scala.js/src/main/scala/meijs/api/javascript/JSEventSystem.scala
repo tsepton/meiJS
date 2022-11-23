@@ -18,10 +18,19 @@ object JSEventSystem {
   implicit def fromScalaArray[A](iterable: Iterable[A]): js.Array[A] =
     iterable.toJSArray
 
-  type Callback = js.Function1[Event, Unit]
+  type Callback = js.Function1[JSEvent, Unit]
 
   private val callbacks: mutable.Map[Event, js.Array[Callback]] = mutable.Map.empty
-  private var emitted: js.Array[JSEmittedEvent]                 = Nil
+  private var emitted: List[JSEmittedEvent]                     = Nil
+
+  private case class JSEmittedEvent(event: JSEvent, original: Data) {
+    val at: Long = System.currentTimeMillis() / 1000
+  }
+
+  private object JSEmittedEvent {
+    def from(event: JSEvent, data: Data): JSEmittedEvent =
+      new JSEmittedEvent(event, data)
+  }
 
   /** Set an interval which will collect and emit all completed MultimodalEvent in the fact base
     *
@@ -42,27 +51,27 @@ object JSEventSystem {
   }
 
   private def handleEmission(): Unit = {
-    val commands: List[JSEvent] = Database
+    val dataToProcess: List[Data] = Database
       .filter(data => Registry.list contains data.event)
       .filterNot(data => emitted.map(_.event.source).contains(data))
-      .collect { case data: Data => JSEvent from data }
 
-    def emit(e: JSEvent): Unit = {
-      val x = callbacks
-        .getOrElse(e.source.event, js.Array())
-      console.log(x)
-      x.foreach(f => f(e.source.event))
-    }
+    def emit(e: JSEvent): Unit = callbacks
+      .find { case (event, _) => event.name == e.source.name }
+      .map(_._2)
+      .getOrElse(js.Array())
+      .foreach(f => f(e))
 
-    emitted ++= commands.map(event => {
-      emit(event)
-      JSEmittedEvent from event
-    })
+    dataToProcess
+      .collect { case data: Data => (JSEvent from data, data) }
+      .map {
+        case (event, data) => {
+          emit(event)
+          JSEmittedEvent.from(event, data)
+        }
+      }
   }
 
   private object GarbageCollector {
-
-    def collect(): Unit = emitted = emitted.filter(_.event.source.isValid)
-
+    def collect(): Unit = emitted = emitted.filter(_.event.isValid)
   }
 }
