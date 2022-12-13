@@ -14,9 +14,10 @@ object JavascriptModulePlugin extends AutoPlugin {
 
   override def projectSettings: Seq[Def.Setting[Task[Unit]]] = Seq(
     generateNPMPackage := {
+
       val npmTargetDir: String = s"target/npm"
-      val inputDir: String = "target/scala-2.13/meijs-opt"
-      val targetDir: String = s"$npmTargetDir/src"
+      val inputDir: String     = "target/scala-2.13/meijs-opt"
+      val targetDir: String    = s"$npmTargetDir/src"
 
       def copyFiles(): Unit = {
 
@@ -39,8 +40,9 @@ object JavascriptModulePlugin extends AutoPlugin {
         println(s"NPM package created in $npmTargetDir")
       }
 
-      def packageJson: String = f"""
-          |{
+      def packageJson: String =
+        f"""
+           |{
            |  "name": "@${Keys.organizationName.value}/MeiJS",
            |  "version": "${Keys.version.value}",
            |  "description": "${Keys.description.value}}",

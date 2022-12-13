@@ -1,3 +1,0 @@
-interface Data {}
-
-interface MultimodalEvent {}
