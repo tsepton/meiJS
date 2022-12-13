@@ -2,10 +2,7 @@ package meijs.eventbase.structures
 
 import scala.language.implicitConversions
 
-trait CompositeExpression {
-  override def toString: String =
-    "todo" // TODO - Create a human readable simplified composite expression
-}
+trait CompositeExpression
 
 case object CompositeExpression {
   implicit def toCompositeEvent(e: CompositeExpression): CompositeEvent = {
@@ -48,12 +45,12 @@ sealed trait Operator {
 sealed trait UnaryOperator extends Operator {
   val left: Event
 
-  override def toString: String = left.toString + identifier
+  override def toString: String = f"(${left.toString} $identifier)"
 }
 
 sealed trait BinaryOperator extends Operator {
   val left: Event
   val right: Event
 
-  override def toString: String = left.toString + identifier + right
+  override def toString: String = f"(${left.toString} $identifier ${right.toString})"
 }
