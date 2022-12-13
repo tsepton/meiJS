@@ -22,7 +22,7 @@ sealed case class State private (
 
   def stable: Boolean = _stable
 
-  def setUnstable(): Unit = _stable = true
+  def setUnstable(): Unit = _stable = false
 
   def children: List[State] = transitions.values.toList
 

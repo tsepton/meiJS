@@ -11,6 +11,8 @@ object SMRecogniser extends Recogniser {
   private val _registeredEvents: ListBuffer[CompositeEvent]   = ListBuffer()
   private val _stateMachines: ListBuffer[StateMachineWrapper] = ListBuffer()
 
+  def registeredEvents: List[CompositeEvent] = _registeredEvents.toList
+
   def stateMachines: List[StateMachineWrapper] = _stateMachines.toList
 
   def init(): Unit = {
@@ -29,9 +31,7 @@ object SMRecogniser extends Recogniser {
     )
   }
 
-  /** Synchronise this internal state with the Registry registered events.
-    * Will create a state machine per registered event
-    */
+  /** Erase any registered event and its associated state machine */
   def clean(): Unit = {
     _registeredEvents.clear()
     _stateMachines.clear()
@@ -53,14 +53,14 @@ object SMRecogniser extends Recogniser {
       event: Event,
       smAcc: StateMachineMutable = StateMachineMutable.initial
   ): StateMachineMutable = event match {
-    case e: AtomicEvent => StateMachineMutable.initWithSimpleEvent(e)
+    case e: AtomicEvent    => StateMachineMutable.initWithSimpleEvent(e)
     case e: CompositeEvent =>
       e.expression match {
-        case exp: Iteration => createStateMachine(exp.left, smAcc).loop
-        case exp: And =>
+        case exp: Iteration  => createStateMachine(exp.left, smAcc).loop
+        case exp: And        =>
           createStateMachine(exp.left, smAcc) permute
             createStateMachine(exp.right, smAcc)
-        case exp: Or =>
+        case exp: Or         =>
           createStateMachine(exp.left, smAcc) overlay
             createStateMachine(exp.right, smAcc)
         case exp: FollowedBy =>

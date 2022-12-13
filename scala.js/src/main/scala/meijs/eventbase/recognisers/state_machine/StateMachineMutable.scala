@@ -63,11 +63,14 @@ class StateMachineMutable private () extends StateMachine {
     } yield sorted).flatten
     paths
       .map {
-        _.map(atomic => {
-          val x = StateMachineMutable initWithSimpleEvent atomic
-          x.startState.setUnstable()
-          x
-        })
+        _.zipWithIndex
+          .map {
+            case (atomic, 0) => StateMachineMutable initWithSimpleEvent atomic
+            case (atomic, _) =>
+              val stateMachine = StateMachineMutable initWithSimpleEvent atomic
+              stateMachine.startState.setUnstable()
+              stateMachine
+          }
           .foldLeft(StateMachineMutable.initial) { case (acc, sm) =>
             acc concatenate sm
           }

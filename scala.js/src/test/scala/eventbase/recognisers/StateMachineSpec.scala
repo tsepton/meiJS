@@ -82,12 +82,27 @@ class StateMachineSpec extends AnyFunSuite with BeforeAndAfter {
     })
   }
 
+  test("Ensure permute operation set nodes as unstable for putThatThere") {
+    Registry += putThatThere
+    SMRecogniser.sync()
+    SMRecogniser.stateMachines.foreach(sm => {
+      assert(sm.states.count(!_.stable) == 4)
+    })
+  }
+
+  test("Ensure permute operation set nodes as unstable for sayHi") {
+    Registry += sayHi
+    SMRecogniser.sync()
+    SMRecogniser.stateMachines.foreach(sm => {
+      assert(sm.states.count(!_.stable) == 2)
+    })
+  }
+
   test("Ensure basic loop operation is correct") {
     Registry += putMultipleTimes
     SMRecogniser.sync()
     SMRecogniser.stateMachines.foreach(sm => {
       assert(sm.size == 1)
-      println(sm.events)
       assert(sm.events.length == 1)
     })
   }
