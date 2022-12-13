@@ -6,7 +6,6 @@ import meijs.eventbase.structures.{AtomicEvent, CompositeEvent, Data}
 import scala.scalajs.js
 import scala.scalajs.js.timers.SetIntervalHandle
 
-// TODO see article - somes nodes are said to be unstable ! this represents the timing of the and operator
 case class StateMachineWrapper(
     event: CompositeEvent,
     f: CompositeEvent => StateMachine
@@ -20,12 +19,22 @@ case class StateMachineWrapper(
   private var lastCheckForEmissionTime: Long        = 0
   // if no new events happen during that interval, it will trigger a reset
   private var timeoutInterval                       = setTimeoutInterval()
+  private var stableTimeoutInterval                 = setTimeoutInterval()
 
   private def setTimeoutInterval(): SetIntervalHandle = js.timers.setInterval(5000) {
     reset()
   }
 
-  private def clearTimeoutInterval(): Unit = js.timers.clearInterval(timeoutInterval)
+  // TODO : timer config - in the original paper, it is left for the end user to configure it
+  private def setStableTimeoutInterval(state: State) = js.timers.setInterval(500) {
+    assert(state.stable)
+    currentState = state
+  }
+
+  private def clearTimeoutIntervals(): Unit = {
+    js.timers.clearInterval(timeoutInterval)
+    js.timers.clearInterval(stableTimeoutInterval)
+  }
 
   private def processNewEvents(): Unit = {
     val unprocessed: List[Data] =
@@ -45,15 +54,19 @@ case class StateMachineWrapper(
     currentState.events
       .find(e => e.name == event.name)
       .map(e => {
-        //clearTimeoutInterval()
+        clearTimeoutIntervals()
         occurrence = occurrence appended event
-        currentState.transitions(e)
+        currentState transitions e
       })
       .foreach(nextState => {
         if (nextState == machine.endState) {
-          emit(occurrence)
+          emit()
           reset()
-        } else currentState = nextState
+        } else {
+          if (!nextState.stable)
+            stableTimeoutInterval = setStableTimeoutInterval(currentState)
+          currentState = nextState
+        }
         timeoutInterval = setTimeoutInterval()
       })
   }
@@ -63,7 +76,6 @@ case class StateMachineWrapper(
     occurrence = Nil
   }
 
-  private def emit(occurrence: List[AtomicEvent]): Unit =
-    Database += Data.from(this.event, occurrence)
+  private def emit(): Unit = Database += Data.from(this.event, occurrence)
 
 }

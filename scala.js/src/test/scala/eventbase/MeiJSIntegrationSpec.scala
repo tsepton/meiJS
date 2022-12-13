@@ -1,16 +1,20 @@
 package eventbase
 
-import meijs.eventbase.{Database, Registry}
+import meijs.api.javascript.JSEventSystem
+import meijs.eventbase.Registry
+import meijs.eventbase.recognisers.state_machine.SMRecogniser
 import meijs.{Config, MeiJS}
-import org.scalajs.dom.{Event, document}
+import org.scalatest.BeforeAndAfter
 import org.scalatest.funsuite.AnyFunSuite
 
-class MeiJSIntegrationSpec extends AnyFunSuite {
+class MeiJSIntegrationSpec extends AnyFunSuite with BeforeAndAfter {
 
   val appConfigWithEventEmission    = new Config(true)
   val appConfigWithoutEventEmission = new Config(false)
 
-  def fakePutThatThereEventOccurrence(): Unit = {
+  var counter: Int = 0
+
+  private def fakePutThatThereEventOccurrence(): Unit = {
     MockupData.fakeVoice("put")
     MockupData.fakeVoice("that")
     MockupData.fakeClick()
@@ -18,29 +22,51 @@ class MeiJSIntegrationSpec extends AnyFunSuite {
     MockupData.fakeClick()
   }
 
-  // TODO for the app integration testing, we'll need a fake dom
-  test("Javascript api") {
+  private def fakeSayHiEventOccurrence(): Unit = {
+    MockupData.fakeVoice("say")
+    MockupData.fakeVoice("hi")
+    MockupData.fakeClick()
+  }
 
+  MockupData.defaultEvents foreach { cEvent =>
+    JSEventSystem.subscribe(cEvent, _ => counter += 1)
+  }
+
+  after {
+    Registry.clean()
+    SMRecogniser.clean()
+  }
+
+  before {
     MeiJS.enable(appConfigWithEventEmission)
-    MockupData.defaultEvents.foreach(x => Registry.register(x))
+  }
+
+  // TODO for the app integration testing, we'll need a fake dom
+  test("Ensure the Javascript api event system global workflow") {
     assertResult(MockupData.defaultEvents.length)(Registry.list.length)
 
-    var i = 0
-    MockupData.defaultEvents foreach { cEvent =>
-      document.addEventListener(
-        cEvent.name,
-        { (e: Event) =>
-          {
-            i += 1
-            assert(MockupData.defaultEvents.map(_.name) contains e.`type`)
-          }
-        }
-      )
-    }
+    fakePutThatThereEventOccurrence()
+    assertResult(1)(counter)
+    fakeSayHiEventOccurrence()
+    assertResult(2)(counter)
+    fakeSayHiEventOccurrence()
+    fakePutThatThereEventOccurrence()
+    fakeSayHiEventOccurrence()
+    fakeSayHiEventOccurrence()
+    fakeSayHiEventOccurrence()
+    assertResult(7)(counter)
+  }
 
-    val n = 10;
-    (0 until n).foreach(_ => fakePutThatThereEventOccurrence())
-    assertResult(n)(i)
+  test("Ensure timeout for unstable nodes of state machines works") {
+    assertResult(MockupData.defaultEvents.length)(Registry.list.length)
+
+    MockupData.fakeVoice("put")
+    MockupData.fakeVoice("that")
+    MockupData.fakeClick()
+    wait(1000) // TODO once the value config setup has been done use that (value + 1)
+    MockupData.fakeVoice("there")
+    MockupData.fakeClick()
+    assertResult(0)(counter)
   }
 
 }
