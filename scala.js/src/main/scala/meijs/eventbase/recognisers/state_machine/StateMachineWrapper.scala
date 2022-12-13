@@ -11,15 +11,15 @@ case class StateMachineWrapper(
     event: CompositeEvent,
     f: CompositeEvent => StateMachine
 ) {
-  val machine: StateMachine = f(event)
+  val machine: StateMachine                         = f(event)
   private val stateMuterInterval: SetIntervalHandle = js.timers.setInterval(100) {
     processNewEvents()
   }
-  private var occurrence: List[AtomicEvent]  = Nil
-  private var currentState: State            = machine.startState
-  private var lastCheckForEmissionTime: Long = 0
+  private var occurrence: List[AtomicEvent]         = Nil
+  private var currentState: State                   = machine.startState
+  private var lastCheckForEmissionTime: Long        = 0
   // if no new events happen during that interval, it will trigger a reset
-  private var timeoutInterval = setTimeoutInterval()
+  private var timeoutInterval                       = setTimeoutInterval()
 
   private def setTimeoutInterval(): SetIntervalHandle = js.timers.setInterval(5000) {
     reset()
@@ -45,7 +45,7 @@ case class StateMachineWrapper(
     currentState.events
       .find(e => e.name == event.name)
       .map(e => {
-        clearTimeoutInterval()
+        //clearTimeoutInterval()
         occurrence = occurrence appended event
         currentState.transitions(e)
       })

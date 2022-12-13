@@ -46,8 +46,6 @@ class StateMachineMutable private () extends StateMachine {
   /** A new state machine is returned which was built using all possible event permutations from this and that.
     * See: "A domain-specific textual language for rapid prototyping of multimodal interactive systems"
     *
-    * TODO : Unstable nodes
-    *
     * @param that : The StateMachine to do the event permutations with this
     * @return this
     */
@@ -55,17 +53,21 @@ class StateMachineMutable private () extends StateMachine {
     val paths: List[Path] = (for {
       thisEvents <- allPaths
       thatEvents <- that.allPaths
-      sorted = (thisEvents ++ thatEvents)
-        .sortWith { (event1, event2) =>
-          event1.toString.length > event2.toString.length
-        }
-        .distinct
-        .permutations
-        .toList
+      sorted      = (thisEvents ++ thatEvents)
+                      .sortWith { (event1, event2) =>
+                        event1.toString.length > event2.toString.length
+                      }
+                      .distinct
+                      .permutations
+                      .toList
     } yield sorted).flatten
     paths
       .map {
-        _.map(StateMachineMutable.initWithSimpleEvent)
+        _.map(atomic => {
+          val x = StateMachineMutable initWithSimpleEvent atomic
+          x.startState.setUnstable()
+          x
+        })
           .foldLeft(StateMachineMutable.initial) { case (acc, sm) =>
             acc concatenate sm
           }
@@ -133,7 +135,7 @@ class StateMachineMutable private () extends StateMachine {
       target: State = State.initial
   ): State = {
     states.find(state => state == from) match {
-      case None => ()
+      case None       => ()
       case Some(from) =>
         from.put(event, target)
         endState = target

@@ -1,5 +1,6 @@
 package meijs.eventbase.recognisers.state_machine
 
+import meijs.eventbase.recognisers.state_machine.State.StateIdentifier
 import meijs.eventbase.structures.AtomicEvent
 
 // TODO: This horrible code will be entirely re-written !
@@ -10,16 +11,18 @@ import meijs.eventbase.structures.AtomicEvent
   *
   * @param _transitions : Event is an event leading to other state
   */
-case class State private (
+sealed case class State private (
     private var _transitions: Map[AtomicEvent, State],
-    stable: Boolean = true
-)(implicit
-    val stateIdentifier: StateIdentifier
-) {
+    private var _stable: Boolean = true
+)(implicit val stateIdentifier: StateIdentifier) {
 
   val id: Int = stateIdentifier.get
 
   def transitions: Map[AtomicEvent, State] = _transitions
+
+  def stable: Boolean = _stable
+
+  def setUnstable(): Unit = _stable = true
 
   def children: List[State] = transitions.values.toList
 
@@ -41,7 +44,7 @@ case class State private (
   def put(event: AtomicEvent, state: State): Unit = _transitions =
     _transitions ++ Map(event -> state)
 
-  override def toString: String =
+  override def toString: String                   =
     (if (transitions.nonEmpty)
        transitions.map { case (event, state) =>
          f"($id) -${event.name}-> (${state.id})"
@@ -62,12 +65,12 @@ object State {
     identifier.increment()
     State(_transitions = Map.empty)(identifier)
   }
-}
 
-case class StateIdentifier() {
-  private var total = 0
+  sealed case class StateIdentifier() {
+    private var total = 0
 
-  def get: Int = total
+    def get: Int = total
 
-  def increment(): Unit = total += 1
+    def increment(): Unit = total += 1
+  }
 }

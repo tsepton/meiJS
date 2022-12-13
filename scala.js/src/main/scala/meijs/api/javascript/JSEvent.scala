@@ -1,6 +1,6 @@
 package meijs.api.javascript
 
-import meijs.eventbase.structures.{AtomicEvent, CompositeEvent, Data, Event}
+import meijs.eventbase.structures.{AtomicEvent, Data, Event}
 import org.scalajs.dom
 
 import scala.concurrent.duration.FiniteDuration
@@ -29,10 +29,6 @@ object JSEvent {
   def from(source: Data): JSEvent =
     new JSEvent(typeArg = typeArgFrom(source), source)
 
-  def typeArgFrom(source: Data): String = source.event match {
-    case event: AtomicEvent    => event.name
-    case event: CompositeEvent => event.name
-    case _                     => "Unknown multimodal event"
-  }
+  def typeArgFrom(source: Data): String = source.event.name
 
 }
