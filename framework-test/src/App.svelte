@@ -5,9 +5,9 @@
   import ExportedLib from "./component/ExportedLib.svelte";
   //import * as Leap from "leapjs";
 
-  Leap.loop(function (frame, e) {
-    console.log(frame.hands.length);
-  });
+  // Leap.loop(function (frame, e) {
+  //   console.log(frame.hands.length);
+  // });
 
   meiJS.enable({
     useEventSystem: true,

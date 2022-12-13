@@ -27,7 +27,6 @@ case class StateMachineWrapper(
 
   // TODO : timer config - in the original paper, it is left for the end user to configure it
   private def setStableTimeoutInterval(state: State) = js.timers.setInterval(500) {
-    assert(state.stable)
     currentState = state
   }
 

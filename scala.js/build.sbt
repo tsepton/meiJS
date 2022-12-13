@@ -5,7 +5,7 @@ ThisBuild / organizationName := "tsepton"
 
 lazy val root = (project in file("."))
   .enablePlugins(ScalaJSPlugin)
-  //.enablePlugins(ScalaJSBundlerPlugin)
+  .enablePlugins(ScalaJSBundlerPlugin)
   .enablePlugins(BuildInfoPlugin)
   .settings(
     name := "MeiJS",
@@ -23,17 +23,23 @@ lazy val root = (project in file("."))
       description
     )
   )
-val author = "tsepton"
+val author    = "tsepton"
 scalacOptions ++= Seq("-deprecation", "-feature")
 
 enablePlugins(JavascriptModulePlugin)
 
-Compile / mainClass := Some("meijs.MeiJS")
+// Application compilation related
 scalaJSUseMainModuleInitializer := true
-webpackBundlingMode := BundlingMode.LibraryAndApplication()
-Test / scalaJSLinkerConfig ~= {
-  _.withModuleKind(ModuleKind.CommonJSModule)
-}
+Compile / webpackBundlingMode := BundlingMode.LibraryAndApplication()
+Compile / mainClass := Some("meijs.MeiJS")
 Compile / scalaJSLinkerConfig ~= {
   _.withModuleKind(ModuleKind.ESModule)
 }
+
+// Application testing related
+// Add support for the DOM in `run` and `test`
+Test / scalaJSLinkerConfig ~= {
+  _.withModuleKind(ModuleKind.CommonJSModule)
+}
+Test / requireJsDomEnv := true
+Test / jsEnv := new org.scalajs.jsenv.jsdomnodejs.JSDOMNodeJSEnv()

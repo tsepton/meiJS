@@ -7,6 +7,8 @@ import meijs.{Config, MeiJS}
 import org.scalatest.BeforeAndAfter
 import org.scalatest.funsuite.AnyFunSuite
 
+import scala.scalajs.js
+
 class MeiJSIntegrationSpec extends AnyFunSuite with BeforeAndAfter {
 
   val appConfigWithEventEmission    = new Config(true)
@@ -63,7 +65,9 @@ class MeiJSIntegrationSpec extends AnyFunSuite with BeforeAndAfter {
     MockupData.fakeVoice("put")
     MockupData.fakeVoice("that")
     MockupData.fakeClick()
-    wait(1000) // TODO once the value config setup has been done use that (value + 1)
+    js.timers.setTimeout(
+      1000
+    ) {} // TODO once the value config setup has been done use that (value + 1)
     MockupData.fakeVoice("there")
     MockupData.fakeClick()
     assertResult(0)(counter)
