@@ -24,27 +24,23 @@ object MockupData {
   }
 
   val putPlusThat: CompositeEvent = new CompositeEvent {
-    val name: String                    = "putThatThere"
-    val expression: CompositeExpression =
-      (put + that)
+    val name: String                    = "putPlusThat"
+    val expression: CompositeExpression = (put + that)
   }
 
   val putOrThat: CompositeEvent = new CompositeEvent {
-    val name: String                    = "putThatThere"
-    val expression: CompositeExpression =
-      (put | that)
+    val name: String                    = "putOrThat"
+    val expression: CompositeExpression = (put | that)
   }
 
   val putOrPut: CompositeEvent = new CompositeEvent {
-    val name: String                    = "putThatThere"
-    val expression: CompositeExpression =
-      (put | put)
+    val name: String                    = "putOrPut"
+    val expression: CompositeExpression = (put | put)
   }
 
   val putFollowedByThat: CompositeEvent = new CompositeEvent {
-    val name: String                    = "putThatThere"
-    val expression: CompositeExpression =
-      put `;` that
+    val name: String                    = "putFollowedByThat"
+    val expression: CompositeExpression = put `;` that
   }
 
   val selectThis: CompositeEvent = new CompositeEvent {
@@ -61,8 +57,7 @@ object MockupData {
 
   val sayHi: CompositeEvent = new CompositeEvent {
     override val name: String                    = "sayHi"
-    override val expression: CompositeExpression =
-      Voice("say hi") + Mouse("click")
+    override val expression: CompositeExpression = Voice("say hi") + Mouse("click")
   }
 
   def defaultEvents: List[CompositeEvent] = List(sayHi, putThatThere)
